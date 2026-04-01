@@ -156,6 +156,17 @@ KGentool은 2개 백엔드를 지원합니다.
 }
 ```
 
+한국형(한국어 출력/핸드오프 규칙 강화) 워크플로:
+```json
+{
+  "tool": "kgentool_workflow_run",
+  "arguments": {
+    "workflowName": "cpp_refactor_ko",
+    "prompt": "이 모듈을 C++ 중심 구조로 리팩토링하기 위한 실행 계획과 리뷰를 한국어로 진행해줘. (WSL 기준 실행 커맨드 포함)"
+  }
+}
+```
+
 ## 문서 허브
 ### GitHub Pages 문서
 - [공식 주소](https://sheryloe.github.io/DonggriGent/)
@@ -167,6 +178,12 @@ KGentool은 2개 백엔드를 지원합니다.
 - [FAQ](./docs/faq.html)
 - [슬라이드 뷰](./docs/slides.html)
 
+문서 운영(로컬):
+```bash
+npm run docs:check
+npm run docs:serve
+```
+
 ### Wiki 원본(이관용)
 - [Wiki Home](./docs/wiki-ready/Home.md)
 - [Wiki Sidebar](./docs/wiki-ready/_Sidebar.md)
@@ -174,11 +191,16 @@ KGentool은 2개 백엔드를 지원합니다.
 ### 슬라이드 원본
 - [KGentool 소개 슬라이드(마크다운)](./docs/slides/kgentool-overview.md)
 
-## GitHub Pages 배포 방법
-1. 저장소 `Settings > Pages`로 이동
-2. Source를 `Deploy from a branch`로 선택
-3. Branch를 기본 브랜치로 두고 폴더는 `/docs` 선택
-4. 배포 URL 확인 후 `docs/robots.txt`, `docs/sitemap.xml`의 placeholder 도메인 교체
+## GitHub Pages 운영(권장: GitHub Actions)
+1. 저장소 `Settings > Pages`에서 Source를 **GitHub Actions**로 설정
+2. 문서는 `docs/`만 수정하고 `main`에 푸시
+3. `.github/workflows/pages.yml`가 `docs/**` 변경 시 자동 배포
+
+배포 전 최소 점검(권장):
+```bash
+npm test
+npm run docs:check
+```
 
 ## Wiki 이관 방법
 1. GitHub 저장소의 Wiki를 활성화

@@ -13,9 +13,11 @@ const __dirname = path.dirname(__filename);
 test('agent-definitions: loads project-local Codex agents', async () => {
   const dirPath = path.join(__dirname, '..', '.codex', 'agents');
   const definitions = await loadAgentDefinitions(dirPath);
-  assert.equal(definitions.length, 6);
+  assert.ok(definitions.length >= 6);
   assert.ok(definitions.some((item) => item.id === 'kgentool-supervisor'));
   assert.ok(definitions.some((item) => item.id === 'cpp-pro-kg'));
+  assert.ok(definitions.some((item) => item.id === 'kgentool-supervisor-ko'));
+  assert.ok(definitions.some((item) => item.id === 'cpp-pro-kg-ko'));
   assert.ok(definitions.every((item) => typeof item.developerInstructions === 'string' && item.developerInstructions.length > 0));
 });
 

@@ -91,7 +91,13 @@
       <section class="grid">
         <article class="card">
           <h2>workflow.run 체인</h2>
-          <p>현재 기본 워크플로:</p>
+          <p>추천 워크플로(한국형, <code>*_ko</code>):</p>
+          <ul class="list-tight">
+            <li><code>cpp_refactor_ko</code>: supervisor(ko) → cpp-pro(ko) → reviewer(ko)</li>
+            <li><code>vendor_hardening_ko</code>: supervisor(ko) → vendor-profile(ko) → reviewer(ko)</li>
+            <li><code>mcp_extension_ko</code>: supervisor(ko) → mcp-contract(ko) → reviewer(ko)</li>
+          </ul>
+          <p>레거시(호환 유지):</p>
           <ul class="list-tight">
             <li><code>cpp_refactor</code>: supervisor → cpp-pro-kg → reviewer-kg</li>
             <li><code>vendor_hardening</code>: supervisor → vendor-profile-kg → reviewer-kg</li>
@@ -100,7 +106,7 @@
           <pre><code>{
   "tool": "kgentool_workflow_run",
   "arguments": {
-    "workflowName": "vendor_hardening",
+    "workflowName": "vendor_hardening_ko",
     "prompt": "claude selector 변화에 대한 회귀 위험 점검"
   }
 }</code></pre>

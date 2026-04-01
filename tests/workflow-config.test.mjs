@@ -11,11 +11,13 @@ const __dirname = path.dirname(__filename);
 test('workflow-config: loads bundled KGentool workflows', async () => {
   const filePath = path.join(__dirname, '..', '.kgentool', 'workflows.toml');
   const workflows = await loadWorkflows(filePath);
-  assert.equal(workflows.length, 3);
-  assert.deepEqual(
-    workflows.map((item) => item.name),
-    ['cpp_refactor', 'vendor_hardening', 'mcp_extension']
-  );
+  const names = workflows.map((item) => item.name);
+  assert.ok(names.includes('cpp_refactor'));
+  assert.ok(names.includes('vendor_hardening'));
+  assert.ok(names.includes('mcp_extension'));
+  assert.ok(names.includes('cpp_refactor_ko'));
+  assert.ok(names.includes('vendor_hardening_ko'));
+  assert.ok(names.includes('mcp_extension_ko'));
   assert.ok(workflows.every((item) => item.steps.length === 3));
 });
 

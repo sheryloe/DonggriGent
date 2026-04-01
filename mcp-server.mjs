@@ -805,7 +805,16 @@ registerTool(
   {
     description: 'Run a built-in KGentool workflow that reuses local Codex agent definitions.',
     inputSchema: {
-      workflowName: z.enum(['cpp_refactor', 'vendor_hardening', 'mcp_extension']).describe('Workflow name to execute.'),
+      workflowName: z
+        .enum([
+          'cpp_refactor_ko',
+          'vendor_hardening_ko',
+          'mcp_extension_ko',
+          'cpp_refactor',
+          'vendor_hardening',
+          'mcp_extension'
+        ])
+        .describe('Workflow name to execute. Recommended: *_ko variants (Korean-first defaults).'),
       prompt: z.string().describe('Prompt or execution brief to feed into the workflow.')
     }
   },

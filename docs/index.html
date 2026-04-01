@@ -60,19 +60,32 @@
 
     <main class="page">
       <section class="hero">
-        <h1>MCP 도구 + AI 워크플로를 한 화면에서 운영하세요</h1>
-        <p>
-          KGentool은 로컬 브라우저 세션을 활용해 AI CLI 워크플로를 실전 운영 가능한 형태로 묶어줍니다.
-          설치, MCP 연결, 탭 키 병렬 실행, 산출물 재사용까지 한국어 문서로 바로 시작할 수 있습니다.
-        </p>
-        <p>
-          공식 GitHub Pages 주소:
-          <a href="https://sheryloe.github.io/DonggriGent/" style="color: #ffffff; text-decoration: underline;">https://sheryloe.github.io/DonggriGent/</a>
-        </p>
-        <div class="cta-row">
-          <a class="btn btn-primary" href="./install.html">설치하기</a>
-          <a class="btn btn-secondary" href="./getting-started.html">5분 시작</a>
-          <a class="btn btn-secondary" href="./mcp-setup.html">MCP 연결 보기</a>
+        <div class="hero-grid">
+          <div class="hero-main">
+            <div class="hero-eyebrow">KOREA-FIRST • MCP • WORKFLOWS</div>
+            <h1>MCP 도구 + AI 워크플로를 한 화면에서 운영하세요</h1>
+            <p>
+              KGentool은 로컬 브라우저 세션을 활용해 AI CLI 워크플로를 <strong>실전 운영 가능한 형태</strong>로 묶어줍니다.
+              설치, MCP 연결, 탭 키 병렬 실행, 산출물 재사용까지 한국어 문서로 바로 시작할 수 있습니다.
+            </p>
+            <div class="cta-row">
+              <a class="btn btn-primary" href="./install.html">설치하기</a>
+              <a class="btn btn-secondary" href="./getting-started.html">5분 시작</a>
+              <a class="btn btn-secondary" href="./mcp-setup.html">MCP 연결</a>
+            </div>
+          </div>
+          <aside class="hero-panel">
+            <div class="hero-label">추천: 한국형 워크플로 (*_ko)</div>
+            <ol class="step-list">
+              <li><a href="./install.html">설치</a> → 앱 실행</li>
+              <li><a href="./mcp-setup.html">MCP 연결</a> → CLI에서 도구 등록</li>
+              <li><a href="./workflows.html">워크플로 운영</a> → <code>cpp_refactor_ko</code> 등 실행</li>
+            </ol>
+            <div class="hero-link-row">
+              <span class="hero-label">GitHub Pages</span>
+              <a href="https://sheryloe.github.io/DonggriGent/">https://sheryloe.github.io/DonggriGent/</a>
+            </div>
+          </aside>
         </div>
       </section>
 
@@ -91,6 +104,39 @@
           <div class="kpi">10개+</div>
           <h2>운영 문서 세트</h2>
           <p>README, Pages, Wiki-ready, 슬라이드까지 통합 제공</p>
+        </article>
+      </section>
+
+      <section class="grid">
+        <article class="card workflow-spotlight">
+          <div class="section-kicker">Recommended</div>
+          <h2>한국형 워크플로(*_ko)로 바로 운영</h2>
+          <p>기본 체인은 “감독(계획) → 구현 → 리뷰”로 고정하고, 출력/커맨드를 한국어 기준으로 맞춥니다.</p>
+          <div class="workflow-grid">
+            <div class="workflow-item">
+              <h3><code>cpp_refactor_ko</code></h3>
+              <p>C++ 코어/프로토콜/성능 개선 작업을 “실행 계획 + 구현 + 리뷰”로 끊어서 진행합니다.</p>
+              <pre><code>{
+  "tool": "kgentool_workflow_run",
+  "arguments": {
+    "workflowName": "cpp_refactor_ko",
+    "prompt": "이 모듈을 C++ 중심 구조로 리팩토링하기 위한 실행 계획/구현/리뷰를 한국어로 진행해줘. (WSL 기준 실행 커맨드 포함)"
+  }
+}</code></pre>
+            </div>
+            <div class="workflow-item">
+              <h3><code>vendor_hardening_ko</code></h3>
+              <p>셀렉터/벤더 프로파일 변경에 강한 회귀 방지 루프(검증 포인트 포함)로 운영합니다.</p>
+              <pre><code>{
+  "tool": "kgentool_workflow_run",
+  "arguments": {
+    "workflowName": "vendor_hardening_ko",
+    "prompt": "chatgpt.com 셀렉터 변경 감지 시 회귀 위험과 대응(프로파일 수정 + 검증 절차) 정리"
+  }
+}</code></pre>
+            </div>
+          </div>
+          <div class="note ok">호환성 때문에 레거시 워크플로(<code>cpp_refactor</code> 등)도 유지하지만, 신규 운영은 <code>*_ko</code>를 기본값으로 권장합니다.</div>
         </article>
       </section>
 

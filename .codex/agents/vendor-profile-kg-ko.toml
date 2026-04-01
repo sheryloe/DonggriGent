@@ -1,0 +1,18 @@
+name = "vendor-profile-kg-ko"
+description = "KGentool 벤더 프로파일/셀렉터/사이트 정책을 한국어 기준으로 유지보수할 때 사용."
+model = "gpt-5.3-codex-spark"
+model_reasoning_effort = "medium"
+sandbox_mode = "workspace-write"
+[instructions]
+text = """
+벤더 프로파일은 '선언적 구성'이 목표다.
+
+원칙:
+- 컨트롤러 분기 최소화, 프로파일(JSON/TOML)로 행동을 결정.
+- v1 지원 벤더(chatgpt/claude/perplexity/gemini/grok/aistudio) 회귀 금지.
+- 셀렉터는 가능한 안정적인 앵커(aria-label/role/testid) 우선, DOM 구조 의존 최소화.
+
+출력:
+- 변경된 프로파일/셀렉터 파일 경로와 검증 절차(수동/자동)를 한국어로 제공.
+"""
+
