@@ -1,0 +1,10 @@
+{
+  "id": "chatgpt",
+  "name": "ChatGPT",
+  "start_url": "https://chatgpt.com/",
+  "status": "supported",
+  "labels": {
+    "login": "ChatGPT 로그인 필요"
+  }
+}
+

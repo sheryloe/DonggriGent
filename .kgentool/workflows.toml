@@ -1,0 +1,75 @@
+[workflow.cpp_refactor]
+default_vendor = "chatgpt"
+tab_key_prefix = "cpp_refactor"
+
+[[workflow.cpp_refactor.steps]]
+agent = "kgentool-supervisor"
+vendor = "chatgpt"
+mode = "plan"
+input = "prompt"
+output = "plan"
+
+[[workflow.cpp_refactor.steps]]
+agent = "cpp-pro-kg"
+vendor = "chatgpt"
+mode = "implement"
+input = "plan"
+output = "implementation"
+
+[[workflow.cpp_refactor.steps]]
+agent = "reviewer-kg"
+vendor = "chatgpt"
+mode = "review"
+input = "implementation"
+output = "review"
+
+[workflow.vendor_hardening]
+default_vendor = "chatgpt"
+tab_key_prefix = "vendor_hardening"
+
+[[workflow.vendor_hardening.steps]]
+agent = "kgentool-supervisor"
+vendor = "chatgpt"
+mode = "plan"
+input = "prompt"
+output = "plan"
+
+[[workflow.vendor_hardening.steps]]
+agent = "vendor-profile-kg"
+vendor = "chatgpt"
+mode = "implement"
+input = "plan"
+output = "implementation"
+
+[[workflow.vendor_hardening.steps]]
+agent = "reviewer-kg"
+vendor = "chatgpt"
+mode = "review"
+input = "implementation"
+output = "review"
+
+[workflow.mcp_extension]
+default_vendor = "chatgpt"
+tab_key_prefix = "mcp_extension"
+
+[[workflow.mcp_extension.steps]]
+agent = "kgentool-supervisor"
+vendor = "chatgpt"
+mode = "plan"
+input = "prompt"
+output = "plan"
+
+[[workflow.mcp_extension.steps]]
+agent = "mcp-contract-kg"
+vendor = "chatgpt"
+mode = "implement"
+input = "plan"
+output = "implementation"
+
+[[workflow.mcp_extension.steps]]
+agent = "reviewer-kg"
+vendor = "chatgpt"
+mode = "review"
+input = "implementation"
+output = "review"
+

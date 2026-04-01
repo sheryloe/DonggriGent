@@ -1,0 +1,76 @@
+<svg class="infographic" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 520" role="img" aria-labelledby="title desc">
+  <title id="title">KGentool 아키텍처 흐름도</title>
+  <desc id="desc">UI, Electron Shell, Browser Backend, MCP/HTTP, C++ Core 관계를 설명하는 아키텍처 다이어그램</desc>
+  <defs>
+    <style>
+      .bg { fill: #f7faff; }
+      .title { fill: #16324f; font: 700 30px 'Noto Sans KR', sans-serif; }
+      .box { fill: #fff; stroke: #b8c9df; stroke-width: 2; rx: 16; }
+      .core { fill: #edf4ff; stroke: #6ea2e8; }
+      .name { fill: #12385f; font: 700 21px 'Noto Sans KR', sans-serif; }
+      .text { fill: #4a617a; font: 500 15px 'Noto Sans KR', sans-serif; }
+      .line { stroke: #0b65d8; stroke-width: 3; fill: none; marker-end: url(#m); }
+      .line2 { stroke: #5f6f83; stroke-width: 2.4; fill: none; marker-end: url(#m2); stroke-dasharray: 8 7; }
+      .tag { fill: #0b65d8; font: 700 13px 'Noto Sans KR', sans-serif; }
+    </style>
+    <marker id="m" markerWidth="10" markerHeight="10" refX="7" refY="3" orient="auto">
+      <path d="M0,0 L0,6 L8,3 z" fill="#0b65d8"/>
+    </marker>
+    <marker id="m2" markerWidth="10" markerHeight="10" refX="7" refY="3" orient="auto">
+      <path d="M0,0 L0,6 L8,3 z" fill="#5f6f83"/>
+    </marker>
+  </defs>
+  <rect class="bg" x="0" y="0" width="1200" height="520" rx="20"/>
+  <text class="title" x="40" y="58">KGentool 아키텍처: Shell / Backend / Core</text>
+
+  <rect class="box" x="40" y="110" width="260" height="160"/>
+  <text class="name" x="58" y="146">Control Center UI</text>
+  <text class="text" x="58" y="176">- 탭/설정/워치 폴더 제어</text>
+  <text class="text" x="58" y="198">- 한국어 운영 UX</text>
+  <text class="text" x="58" y="220">- 상태/진행률 시각화</text>
+
+  <rect class="box" x="340" y="110" width="280" height="160"/>
+  <text class="name" x="358" y="146">Electron JS Shell</text>
+  <text class="text" x="358" y="176">- 창/IPC/로컬 앱 수명주기</text>
+  <text class="text" x="358" y="198">- MCP stdio 서버</text>
+  <text class="text" x="358" y="220">- 브라우저 액션 어댑터</text>
+
+  <rect class="box" x="660" y="110" width="240" height="160"/>
+  <text class="name" x="678" y="146">Browser Backend</text>
+  <text class="text" x="678" y="176">- Electron backend</text>
+  <text class="text" x="678" y="198">- Chrome CDP backend</text>
+  <text class="text" x="678" y="220">- 벤더 페이지 조작</text>
+
+  <rect class="box core" x="940" y="84" width="220" height="212"/>
+  <text class="name" x="958" y="124">C++ Core (kgentool-core)</text>
+  <text class="text" x="958" y="156">- 세션/거버너/워크플로</text>
+  <text class="text" x="958" y="178">- 번들/산출물 메타 관리</text>
+  <text class="text" x="958" y="200">- shell-core NDJSON RPC</text>
+  <text class="text" x="958" y="222">- 상태 저장 루트: ~/.kgentool</text>
+  <text class="text" x="958" y="244">- agentify_* 호환 유지</text>
+
+  <rect class="box" x="160" y="320" width="280" height="150"/>
+  <text class="name" x="178" y="356">MCP Client Layer</text>
+  <text class="text" x="178" y="386">- Codex / Claude Code / OpenCode</text>
+  <text class="text" x="178" y="408">- kgentool_* 기본 도구 호출</text>
+  <text class="text" x="178" y="430">- agentify_* alias 호환 호출</text>
+
+  <rect class="box" x="500" y="320" width="320" height="150"/>
+  <text class="name" x="518" y="356">Workflow + Agent Definitions</text>
+  <text class="text" x="518" y="386">- .kgentool/workflows.toml</text>
+  <text class="text" x="518" y="408">- .codex/agents/*.toml</text>
+  <text class="text" x="518" y="430">- supervisor → executor → reviewer 체인</text>
+
+  <path class="line" d="M300 190 H330"/>
+  <path class="line" d="M620 190 H650"/>
+  <path class="line" d="M900 190 H930"/>
+  <path class="line" d="M300 320 V280"/>
+  <path class="line" d="M620 320 V280"/>
+  <path class="line" d="M820 395 H930 V260"/>
+
+  <path class="line2" d="M440 395 H490"/>
+  <path class="line2" d="M820 395 H900"/>
+
+  <text class="tag" x="308" y="300">MCP/HTTP 상태 API</text>
+  <text class="tag" x="690" y="286">브라우저 액션 RPC</text>
+</svg>

@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>KGentool 워크플로 운영 가이드 | 탭 · 산출물 · Watch Folder</title>
+    <meta name="description" content="KGentool 워크플로 운영 문서. 탭 키 운영, 산출물 저장, 워치 폴더, workflow.run, 에이전트 체인을 실전 기준으로 정리합니다." />
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="ko_KR" />
+    <meta property="og:site_name" content="KGentool Docs" />
+    <meta property="og:title" content="KGentool 워크플로 운영 가이드" />
+    <meta property="og:description" content="탭/산출물/watch 폴더/workflow.run 중심의 실전 운영 패턴." />
+    <link rel="canonical" href="./workflows.html" />
+    <link rel="stylesheet" href="./assets/styles.css" />
+  </head>
+  <body>
+    <header class="topbar">
+      <div class="topbar-inner">
+        <div class="brand">
+          <div class="brand-badge">KG</div>
+          <span>KGentool Docs</span>
+        </div>
+        <nav class="nav">
+          <a href="./index.html" data-path="index.html">홈</a>
+          <a href="./getting-started.html" data-path="getting-started.html">5분 시작</a>
+          <a href="./install.html" data-path="install.html">설치</a>
+          <a href="./mcp-setup.html" data-path="mcp-setup.html">MCP 연결</a>
+          <a href="./browser-backends.html" data-path="browser-backends.html">브라우저</a>
+          <a href="./workflows.html" data-path="workflows.html">워크플로</a>
+          <a href="./architecture.html" data-path="architecture.html">아키텍처</a>
+          <a href="./faq.html" data-path="faq.html">FAQ</a>
+          <a href="./slides.html" data-path="slides.html">슬라이드</a>
+        </nav>
+      </div>
+    </header>
+
+    <main class="page">
+      <section class="hero">
+        <h1>워크플로 운영 가이드</h1>
+        <p>키 규칙, 탭 재사용, 산출물 루프, 워치 폴더, 멀티 에이전트 실행을 운영 가능한 표준으로 정리합니다.</p>
+      </section>
+
+      <section class="grid">
+        <article class="card split-6">
+          <h2>탭 키 운영 규칙</h2>
+          <ul class="list-tight">
+            <li>프로젝트별 고정 key 사용: <code>repo-name</code>, <code>billing-bot</code> 등</li>
+            <li>같은 key는 같은 탭/세션 재사용</li>
+            <li>팀 운영 시 key 네이밍 규칙 문서화 권장</li>
+          </ul>
+        </article>
+        <article class="card split-6">
+          <h2>기본 호출 패턴</h2>
+          <pre><code>{
+  "tool": "kgentool_query",
+  "arguments": {
+    "key": "repo-audit",
+    "prompt": "현재 변경사항 리스크를 우선순위로 정리해줘."
+  }
+}</code></pre>
+        </article>
+      </section>
+
+      <section class="grid">
+        <article class="card split-6">
+          <h2>산출물 루프</h2>
+          <ol class="list-tight">
+            <li><code>kgentool_query</code> 실행</li>
+            <li><code>kgentool_save_artifacts</code> 호출</li>
+            <li>반환 경로를 다음 호출 <code>attachments</code>에 재사용</li>
+          </ol>
+          <pre><code>{
+  "tool": "kgentool_save_artifacts",
+  "arguments": { "key": "sprite-lab", "mode": "images", "maxImages": 4 }
+}</code></pre>
+        </article>
+        <article class="card split-6">
+          <h2>워치 폴더 루프</h2>
+          <ol class="list-tight">
+            <li>워치 폴더 등록</li>
+            <li>로컬 파일 드롭</li>
+            <li>스캔 실행 후 인덱싱 결과 확인</li>
+          </ol>
+          <pre><code>{
+  "tool": "agentify_add_watch_folder",
+  "arguments": { "name": "inbox", "folderPath": "/ABS/PATH/INBOX" }
+}</code></pre>
+        </article>
+      </section>
+
+      <section class="grid">
+        <article class="card">
+          <h2>workflow.run 체인</h2>
+          <p>현재 기본 워크플로:</p>
+          <ul class="list-tight">
+            <li><code>cpp_refactor</code>: supervisor → cpp-pro-kg → reviewer-kg</li>
+            <li><code>vendor_hardening</code>: supervisor → vendor-profile-kg → reviewer-kg</li>
+            <li><code>mcp_extension</code>: supervisor → mcp-contract-kg → reviewer-kg</li>
+          </ul>
+          <pre><code>{
+  "tool": "kgentool_workflow_run",
+  "arguments": {
+    "workflowName": "vendor_hardening",
+    "prompt": "claude selector 변화에 대한 회귀 위험 점검"
+  }
+}</code></pre>
+        </article>
+      </section>
+
+      <section class="grid">
+        <article class="card split-6">
+          <h2>운영 체크포인트</h2>
+          <ul class="list-tight">
+            <li>activeQuery 충돌 시 tab_busy 응답 처리</li>
+            <li>timeout/stop 정책을 작업 성격에 맞게 조정</li>
+            <li>watch folder 경로는 절대 경로만 허용</li>
+          </ul>
+        </article>
+        <article class="card split-6">
+          <h2>장애 대응 기준</h2>
+          <ul class="list-tight">
+            <li>로그인 문제: 브라우저 백엔드 전환 검토</li>
+            <li>요청 지연: status/runtime에서 active 쿼리 확인</li>
+            <li>도구 표준화: 신규는 <code>kgentool_*</code> 사용</li>
+          </ul>
+          <div class="note">호환성 때문에 <code>agentify_*</code>는 유지되지만 운영 표준은 <code>kgentool_*</code>로 통일하는 것이 좋습니다.</div>
+        </article>
+      </section>
+
+      <div class="footer">다음 문서: <a href="./architecture.html">아키텍처 설명</a></div>
+    </main>
+    <script src="./assets/site.js"></script>
+  </body>
+</html>

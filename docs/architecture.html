@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>KGentool 아키텍처 | JS Shell + C++ Core + MCP</title>
+    <meta name="description" content="KGentool 아키텍처 문서. Electron JS Shell, Browser Backend, C++ Core, MCP/HTTP 인터페이스 관계를 설명합니다." />
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="ko_KR" />
+    <meta property="og:site_name" content="KGentool Docs" />
+    <meta property="og:title" content="KGentool 아키텍처" />
+    <meta property="og:description" content="Shell/Core 분리와 MCP/HTTP 인터페이스를 중심으로 보는 KGentool 런타임 구조." />
+    <link rel="canonical" href="./architecture.html" />
+    <link rel="stylesheet" href="./assets/styles.css" />
+  </head>
+  <body>
+    <header class="topbar">
+      <div class="topbar-inner">
+        <div class="brand">
+          <div class="brand-badge">KG</div>
+          <span>KGentool Docs</span>
+        </div>
+        <nav class="nav">
+          <a href="./index.html" data-path="index.html">홈</a>
+          <a href="./getting-started.html" data-path="getting-started.html">5분 시작</a>
+          <a href="./install.html" data-path="install.html">설치</a>
+          <a href="./mcp-setup.html" data-path="mcp-setup.html">MCP 연결</a>
+          <a href="./browser-backends.html" data-path="browser-backends.html">브라우저</a>
+          <a href="./workflows.html" data-path="workflows.html">워크플로</a>
+          <a href="./architecture.html" data-path="architecture.html">아키텍처</a>
+          <a href="./faq.html" data-path="faq.html">FAQ</a>
+          <a href="./slides.html" data-path="slides.html">슬라이드</a>
+        </nav>
+      </div>
+    </header>
+
+    <main class="page">
+      <section class="hero">
+        <h1>KGentool 아키텍처</h1>
+        <p>브라우저 제어와 런타임 정책을 분리한 구조를 기준으로, 확장과 호환을 동시에 유지합니다.</p>
+      </section>
+
+      <section class="grid">
+        <article class="card">
+          <h2>전체 흐름도</h2>
+          <img class="infographic" src="./assets/infographics/architecture-flow.svg" alt="KGentool 아키텍처 흐름도" />
+        </article>
+      </section>
+
+      <section class="grid">
+        <article class="card split-6">
+          <h2>Control Center + JS Shell</h2>
+          <ul class="list-tight">
+            <li>제어 센터 UI와 Electron 앱 수명주기 관리</li>
+            <li>MCP stdio 서버 구동 및 HTTP API 노출</li>
+            <li>탭/창/팝업/브라우저 액션 어댑터 담당</li>
+          </ul>
+        </article>
+        <article class="card split-6">
+          <h2>Browser Backend</h2>
+          <ul class="list-tight">
+            <li><code>electron</code>: 임베디드 창</li>
+            <li><code>chrome-cdp</code>: 실제 Chrome 계열 브라우저 제어</li>
+            <li>벤더 UI 변화는 profile/selector 레이어에서 흡수</li>
+          </ul>
+        </article>
+      </section>
+
+      <section class="grid">
+        <article class="card split-6">
+          <h2>C++ Core</h2>
+          <ul class="list-tight">
+            <li>세션/거버너/워크플로/상태 관리 축 담당</li>
+            <li>Shell-Core는 NDJSON RPC 규약으로 통신</li>
+            <li>환경에 따라 JS in-process fallback 경로 제공</li>
+          </ul>
+          <div class="note">현 시점에는 C++ 코어가 skeleton 단계이며, 기능 일부는 JS 호스트가 대체합니다.</div>
+        </article>
+        <article class="card split-6">
+          <h2>워크플로 정의 재사용</h2>
+          <ul class="list-tight">
+            <li><code>.kgentool/workflows.toml</code>로 실행 체인 정의</li>
+            <li><code>.codex/agents/*.toml</code>의 에이전트 설명을 재사용</li>
+            <li>project-local 정의로 커스터마이즈 가능</li>
+          </ul>
+        </article>
+      </section>
+
+      <section class="grid">
+        <article class="card">
+          <h2>인터페이스 전략</h2>
+          <table>
+            <thead>
+              <tr>
+                <th>레이어</th>
+                <th>기본 네임스페이스</th>
+                <th>호환 전략</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>MCP 도구</td>
+                <td><code>kgentool_*</code></td>
+                <td><code>agentify_*</code> alias 유지</td>
+              </tr>
+              <tr>
+                <td>상태 루트</td>
+                <td><code>~/.kgentool/</code></td>
+                <td>legacy 경량 메타 마이그레이션</td>
+              </tr>
+              <tr>
+                <td>프로파일</td>
+                <td><code>vendor-profiles/*</code></td>
+                <td>기존 selector override 파일 호환</td>
+              </tr>
+            </tbody>
+          </table>
+        </article>
+      </section>
+
+      <div class="footer">아키텍처 변화가 필요한 경우 workflow + vendor profile + test 세트를 함께 업데이트하는 방식을 권장합니다.</div>
+    </main>
+    <script src="./assets/site.js"></script>
+  </body>
+</html>

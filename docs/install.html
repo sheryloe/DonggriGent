@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>KGentool 설치/실행 가이드 | Node, Electron, C++ Core</title>
+    <meta name="description" content="KGentool 설치/실행 상세 가이드. quickstart, 수동 설치, 브라우저 백엔드, 상태 경로, 코어 빌드까지 정리합니다." />
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="ko_KR" />
+    <meta property="og:site_name" content="KGentool Docs" />
+    <meta property="og:title" content="KGentool 설치/실행 가이드" />
+    <meta property="og:description" content="Node/Electron 환경에서 KGentool을 안정적으로 설치하고 실행하는 방법." />
+    <link rel="canonical" href="./install.html" />
+    <link rel="stylesheet" href="./assets/styles.css" />
+  </head>
+  <body>
+    <header class="topbar">
+      <div class="topbar-inner">
+        <div class="brand">
+          <div class="brand-badge">KG</div>
+          <span>KGentool Docs</span>
+        </div>
+        <nav class="nav">
+          <a href="./index.html" data-path="index.html">홈</a>
+          <a href="./getting-started.html" data-path="getting-started.html">5분 시작</a>
+          <a href="./install.html" data-path="install.html">설치</a>
+          <a href="./mcp-setup.html" data-path="mcp-setup.html">MCP 연결</a>
+          <a href="./browser-backends.html" data-path="browser-backends.html">브라우저</a>
+          <a href="./workflows.html" data-path="workflows.html">워크플로</a>
+          <a href="./architecture.html" data-path="architecture.html">아키텍처</a>
+          <a href="./faq.html" data-path="faq.html">FAQ</a>
+          <a href="./slides.html" data-path="slides.html">슬라이드</a>
+        </nav>
+      </div>
+    </header>
+
+    <main class="page">
+      <section class="hero">
+        <h1>설치/실행 가이드</h1>
+        <p>운영 환경에서 반복 실행 가능한 형태로, 설치/실행/상태 디렉터리/코어 빌드까지 한 번에 정리합니다.</p>
+      </section>
+
+      <section class="grid">
+        <article class="card split-6">
+          <h2>요구사항</h2>
+          <ul class="list-tight">
+            <li>Node.js 20 이상 (권장 22)</li>
+            <li>npm</li>
+            <li>GUI 환경(Electron 창 실행 가능)</li>
+            <li>선택: C++ 코어 빌드를 위한 CMake + C++20 컴파일러</li>
+          </ul>
+        </article>
+        <article class="card split-6">
+          <h2>기본 경로</h2>
+          <ul class="list-tight">
+            <li>상태 루트: <code>~/.kgentool/</code></li>
+            <li>워크플로: <code>.kgentool/workflows.toml</code></li>
+            <li>Codex 에이전트: <code>.codex/agents/</code></li>
+            <li>MCP 서버 엔트리: <code>mcp-server.mjs</code></li>
+          </ul>
+        </article>
+      </section>
+
+      <section class="grid">
+        <article class="card">
+          <h2>권장 설치(quickstart)</h2>
+          <pre><code>git clone https://github.com/agentify-sh/desktop.git
+cd desktop
+./scripts/quickstart.sh</code></pre>
+          <p>주요 옵션:</p>
+          <pre><code>./scripts/quickstart.sh --foreground
+./scripts/quickstart.sh --show-tabs
+./scripts/quickstart.sh --client codex
+./scripts/quickstart.sh --client all</code></pre>
+        </article>
+        <article class="card">
+          <h2>수동 설치</h2>
+          <pre><code>npm ci
+npm run start</code></pre>
+          <p>의존성 락 문제 시:</p>
+          <pre><code>npm install</code></pre>
+        </article>
+        <article class="card">
+          <h2>C++ 코어 빌드(선택)</h2>
+          <pre><code>npm run core:build
+npm run core:test</code></pre>
+          <div class="note">현재 저장소는 C++ 코어 skeleton 단계이며, 런타임 일부는 JS fallback으로 동작합니다.</div>
+        </article>
+      </section>
+
+      <section class="grid">
+        <article class="card split-6">
+          <h2>환경 변수(주요)</h2>
+          <table>
+            <thead>
+              <tr>
+                <th>변수</th>
+                <th>의미</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td><code>KGENTOOL_STATE_DIR</code></td><td>상태 디렉터리 오버라이드</td></tr>
+              <tr><td><code>KGENTOOL_SHOW_TABS</code></td><td>새 탭 기본 표시 여부</td></tr>
+              <tr><td><code>KGENTOOL_BROWSER_BACKEND</code></td><td><code>electron</code> / <code>chrome-cdp</code></td></tr>
+              <tr><td><code>KGENTOOL_CHROME_BIN</code></td><td>Chrome 실행 파일 경로 지정</td></tr>
+              <tr><td><code>KGENTOOL_CORE_BIN</code></td><td>C++ 코어 바이너리 경로 지정</td></tr>
+            </tbody>
+          </table>
+        </article>
+        <article class="card split-6">
+          <h2>운영 체크</h2>
+          <ul class="list-tight">
+            <li><code>npm run test</code>로 기본 테스트 상태 확인</li>
+            <li>브라우저 로그인 시 팝업 차단 여부 확인</li>
+            <li>상태 디렉터리 용량과 산출물 정리 주기 설정</li>
+            <li>팀 사용 시 탭 키 네이밍 규칙 사전 합의</li>
+          </ul>
+          <div class="note warn">SSO 이슈가 있으면 브라우저 백엔드를 <code>chrome-cdp</code>로 전환하는 것이 일반적으로 안정적입니다.</div>
+        </article>
+      </section>
+
+      <div class="footer">다음 문서: <a href="./mcp-setup.html">MCP 연결 가이드</a></div>
+    </main>
+    <script src="./assets/site.js"></script>
+  </body>
+</html>

@@ -1,0 +1,7 @@
+{
+  "id": "aistudio",
+  "name": "Google AI Studio",
+  "start_url": "https://aistudio.google.com/prompts/new_chat",
+  "status": "supported"
+}
+

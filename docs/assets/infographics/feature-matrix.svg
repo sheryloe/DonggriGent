@@ -1,0 +1,74 @@
+<svg class="infographic" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 560" role="img" aria-labelledby="title desc">
+  <title id="title">KGentool 기능 매트릭스</title>
+  <desc id="desc">탭, 워치 폴더, 산출물, 워크플로, 벤더 프로파일 기능과 활용 목적을 정리한 표형 인포그래픽</desc>
+  <defs>
+    <style>
+      .bg { fill: #f7faff; }
+      .title { fill: #16324f; font: 700 30px 'Noto Sans KR', sans-serif; }
+      .head { fill: #0b65d8; }
+      .headtext { fill: #fff; font: 700 17px 'Noto Sans KR', sans-serif; }
+      .cell { fill: #fff; stroke: #c2d1e4; stroke-width: 1.5; }
+      .feature { fill: #13385e; font: 700 16px 'Noto Sans KR', sans-serif; }
+      .text { fill: #4b617a; font: 500 14px 'Noto Sans KR', sans-serif; }
+      .ok { fill: #00856a; font: 700 15px 'Noto Sans KR', sans-serif; }
+      .mid { fill: #c56100; font: 700 15px 'Noto Sans KR', sans-serif; }
+      .strong { fill: #0b65d8; font: 700 15px 'Noto Sans KR', sans-serif; }
+    </style>
+  </defs>
+  <rect class="bg" x="0" y="0" width="1200" height="560" rx="20"/>
+  <text class="title" x="40" y="58">KGentool 기능 매트릭스</text>
+
+  <rect class="head" x="40" y="90" width="260" height="56" rx="12"/>
+  <rect class="head" x="300" y="90" width="300" height="56" rx="12"/>
+  <rect class="head" x="600" y="90" width="280" height="56" rx="12"/>
+  <rect class="head" x="880" y="90" width="280" height="56" rx="12"/>
+  <text class="headtext" x="58" y="124">기능</text>
+  <text class="headtext" x="318" y="124">무엇을 하나</text>
+  <text class="headtext" x="618" y="124">사용 시점</text>
+  <text class="headtext" x="898" y="124">운영 포인트</text>
+
+  <rect class="cell" x="40" y="160" width="260" height="70" rx="10"/>
+  <rect class="cell" x="300" y="160" width="300" height="70" rx="10"/>
+  <rect class="cell" x="600" y="160" width="280" height="70" rx="10"/>
+  <rect class="cell" x="880" y="160" width="280" height="70" rx="10"/>
+  <text class="feature" x="58" y="188">탭 키 기반 세션</text>
+  <text class="text" x="318" y="188">프로젝트별 탭을 고정/재사용</text>
+  <text class="text" x="618" y="188">병렬 작업, 장기 작업</text>
+  <text class="strong" x="898" y="188">key 규칙 표준화가 중요</text>
+
+  <rect class="cell" x="40" y="238" width="260" height="70" rx="10"/>
+  <rect class="cell" x="300" y="238" width="300" height="70" rx="10"/>
+  <rect class="cell" x="600" y="238" width="280" height="70" rx="10"/>
+  <rect class="cell" x="880" y="238" width="280" height="70" rx="10"/>
+  <text class="feature" x="58" y="266">워치 폴더</text>
+  <text class="text" x="318" y="266">로컬 파일 드롭 후 자동 인덱싱</text>
+  <text class="text" x="618" y="266">반복 업로드 작업</text>
+  <text class="ok" x="898" y="266">inbox/sprites 등 이름 관리</text>
+
+  <rect class="cell" x="40" y="316" width="260" height="70" rx="10"/>
+  <rect class="cell" x="300" y="316" width="300" height="70" rx="10"/>
+  <rect class="cell" x="600" y="316" width="280" height="70" rx="10"/>
+  <rect class="cell" x="880" y="316" width="280" height="70" rx="10"/>
+  <text class="feature" x="58" y="344">산출물 저장</text>
+  <text class="text" x="318" y="344">이미지/파일을 로컬 경로로 저장</text>
+  <text class="text" x="618" y="344">생성물 재활용 루프</text>
+  <text class="ok" x="898" y="344">attachments 재주입</text>
+
+  <rect class="cell" x="40" y="394" width="260" height="70" rx="10"/>
+  <rect class="cell" x="300" y="394" width="300" height="70" rx="10"/>
+  <rect class="cell" x="600" y="394" width="280" height="70" rx="10"/>
+  <rect class="cell" x="880" y="394" width="280" height="70" rx="10"/>
+  <text class="feature" x="58" y="422">워크플로 실행</text>
+  <text class="text" x="318" y="422">supervisor/executor/reviewer 체인</text>
+  <text class="text" x="618" y="422">리팩토링/검수 자동화</text>
+  <text class="strong" x="898" y="422">workflow.toml 표준 유지</text>
+
+  <rect class="cell" x="40" y="472" width="260" height="70" rx="10"/>
+  <rect class="cell" x="300" y="472" width="300" height="70" rx="10"/>
+  <rect class="cell" x="600" y="472" width="280" height="70" rx="10"/>
+  <rect class="cell" x="880" y="472" width="280" height="70" rx="10"/>
+  <text class="feature" x="58" y="500">벤더 프로파일</text>
+  <text class="text" x="318" y="500">사이트별 selector/정책 분리</text>
+  <text class="text" x="618" y="500">벤더 UI 변화 대응</text>
+  <text class="mid" x="898" y="500">프로파일 회귀 테스트 필요</text>
+</svg>

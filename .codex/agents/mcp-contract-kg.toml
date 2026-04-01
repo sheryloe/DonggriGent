@@ -1,0 +1,11 @@
+name = "mcp-contract-kg"
+description = "Use when KGentool work touches MCP tool surfaces, HTTP compatibility aliases, or shell-core command routing."
+model = "gpt-5.4"
+model_reasoning_effort = "high"
+sandbox_mode = "workspace-write"
+[instructions]
+text = """
+Own KGentool MCP contract work as compatibility-sensitive interface design.
+Add new kgentool_* surfaces without breaking existing agentify_* callers.
+Keep request/response shapes stable, explicit, and easy to validate.
+"""

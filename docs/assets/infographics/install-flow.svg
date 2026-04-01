@@ -1,0 +1,60 @@
+<svg class="infographic" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 420" role="img" aria-labelledby="title desc">
+  <title id="title">KGentool 설치 흐름도</title>
+  <desc id="desc">설치, 실행, 로그인, MCP 등록, 첫 질의 순서를 설명하는 다이어그램</desc>
+  <defs>
+    <style>
+      .bg { fill: #f7faff; }
+      .title { fill: #16324f; font: 700 30px 'Noto Sans KR', sans-serif; }
+      .step { fill: #ffffff; stroke: #b8c9df; stroke-width: 2; rx: 16; }
+      .step-title { fill: #13385e; font: 700 20px 'Noto Sans KR', sans-serif; }
+      .step-text { fill: #4a617a; font: 500 15px 'Noto Sans KR', sans-serif; }
+      .arrow { stroke: #0b65d8; stroke-width: 4; fill: none; marker-end: url(#m); }
+      .num { fill: #0b65d8; font: 700 16px 'Noto Sans KR', sans-serif; }
+    </style>
+    <marker id="m" markerWidth="10" markerHeight="10" refX="7" refY="3" orient="auto">
+      <path d="M0,0 L0,6 L8,3 z" fill="#0b65d8"/>
+    </marker>
+  </defs>
+  <rect class="bg" x="0" y="0" width="1200" height="420" rx="20"/>
+  <text class="title" x="40" y="56">KGentool 설치 → 운영 시작 흐름</text>
+
+  <rect class="step" x="40" y="108" width="210" height="210"/>
+  <text class="num" x="56" y="136">1</text>
+  <text class="step-title" x="56" y="164">저장소 준비</text>
+  <text class="step-text" x="56" y="194">git clone + 디렉터리 이동</text>
+  <text class="step-text" x="56" y="218">quickstart 또는 npm ci</text>
+  <text class="step-text" x="56" y="242">실행 준비 완료</text>
+
+  <rect class="step" x="278" y="108" width="210" height="210"/>
+  <text class="num" x="294" y="136">2</text>
+  <text class="step-title" x="294" y="164">앱 실행</text>
+  <text class="step-text" x="294" y="194">npm run start</text>
+  <text class="step-text" x="294" y="218">제어 센터 열기</text>
+  <text class="step-text" x="294" y="242">벤더 탭 생성</text>
+
+  <rect class="step" x="516" y="108" width="210" height="210"/>
+  <text class="num" x="532" y="136">3</text>
+  <text class="step-title" x="532" y="164">브라우저 로그인</text>
+  <text class="step-text" x="532" y="194">ChatGPT/Claude 등 로그인</text>
+  <text class="step-text" x="532" y="218">CAPTCHA는 수동 처리</text>
+  <text class="step-text" x="532" y="242">세션 준비 완료</text>
+
+  <rect class="step" x="754" y="108" width="210" height="210"/>
+  <text class="num" x="770" y="136">4</text>
+  <text class="step-title" x="770" y="164">MCP 서버 등록</text>
+  <text class="step-text" x="770" y="194">codex / claude / opencode</text>
+  <text class="step-text" x="770" y="218">kgentool-desktop 연결</text>
+  <text class="step-text" x="770" y="242">도구 목록 확인</text>
+
+  <rect class="step" x="992" y="108" width="170" height="210"/>
+  <text class="num" x="1008" y="136">5</text>
+  <text class="step-title" x="1008" y="164">첫 질의 실행</text>
+  <text class="step-text" x="1008" y="194">kgentool_query 호출</text>
+  <text class="step-text" x="1008" y="218">탭 키 고정 운용</text>
+  <text class="step-text" x="1008" y="242">산출물/워크플로 확장</text>
+
+  <path class="arrow" d="M250 213 H270"/>
+  <path class="arrow" d="M488 213 H508"/>
+  <path class="arrow" d="M726 213 H746"/>
+  <path class="arrow" d="M964 213 H984"/>
+</svg>

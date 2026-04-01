@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>KGentool 5분 시작 | MCP 도구 빠른 온보딩</title>
+    <meta name="description" content="KGentool 5분 시작 가이드. 설치, 실행, 로그인, MCP 등록, 첫 질의까지 최소 단계로 빠르게 시작합니다." />
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="ko_KR" />
+    <meta property="og:site_name" content="KGentool Docs" />
+    <meta property="og:title" content="KGentool 5분 시작" />
+    <meta property="og:description" content="설치부터 MCP 첫 호출까지 빠르게 따라하는 실전 시작 가이드." />
+    <link rel="canonical" href="./getting-started.html" />
+    <link rel="stylesheet" href="./assets/styles.css" />
+  </head>
+  <body>
+    <header class="topbar">
+      <div class="topbar-inner">
+        <div class="brand">
+          <div class="brand-badge">KG</div>
+          <span>KGentool Docs</span>
+        </div>
+        <nav class="nav">
+          <a href="./index.html" data-path="index.html">홈</a>
+          <a href="./getting-started.html" data-path="getting-started.html">5분 시작</a>
+          <a href="./install.html" data-path="install.html">설치</a>
+          <a href="./mcp-setup.html" data-path="mcp-setup.html">MCP 연결</a>
+          <a href="./browser-backends.html" data-path="browser-backends.html">브라우저</a>
+          <a href="./workflows.html" data-path="workflows.html">워크플로</a>
+          <a href="./architecture.html" data-path="architecture.html">아키텍처</a>
+          <a href="./faq.html" data-path="faq.html">FAQ</a>
+          <a href="./slides.html" data-path="slides.html">슬라이드</a>
+        </nav>
+      </div>
+    </header>
+
+    <main class="page">
+      <section class="hero">
+        <h1>KGentool 5분 시작</h1>
+        <p>처음 설치하는 사용자를 기준으로, 최소 명령과 최소 선택으로 바로 작동하는 상태까지 안내합니다.</p>
+        <div class="cta-row">
+          <a class="btn btn-primary" href="./install.html">설치 상세 보기</a>
+          <a class="btn btn-secondary" href="./mcp-setup.html">MCP 연결 보기</a>
+        </div>
+      </section>
+
+      <section class="grid">
+        <article class="card">
+          <h2>1) 저장소 준비</h2>
+          <pre><code>git clone https://github.com/agentify-sh/desktop.git
+cd desktop</code></pre>
+        </article>
+        <article class="card">
+          <h2>2) 빠른 시작 스크립트 실행</h2>
+          <pre><code>./scripts/quickstart.sh</code></pre>
+          <p>이 스크립트는 의존성 설치, MCP 등록(선택), 앱 실행까지 한 번에 처리합니다.</p>
+        </article>
+        <article class="card">
+          <h2>3) 제어 센터에서 기본 탭 열기</h2>
+          <ul class="list-tight">
+            <li><code>기본 탭 열기</code> 버튼 클릭</li>
+            <li>원하는 벤더 계정으로 로그인</li>
+            <li>필요하면 Browser backend를 <code>chrome-cdp</code>로 변경</li>
+          </ul>
+        </article>
+        <article class="card">
+          <h2>4) MCP 등록(수동 필요 시)</h2>
+          <pre><code>codex mcp add kgentool-desktop -- node /ABS/PATH/TO/desktop/mcp-server.mjs</code></pre>
+          <p>다른 클라이언트는 <a href="./mcp-setup.html">MCP 연결 문서</a> 참고.</p>
+        </article>
+        <article class="card">
+          <h2>5) 첫 요청 실행</h2>
+          <pre><code>{
+  "tool": "kgentool_query",
+  "arguments": {
+    "key": "quickstart",
+    "prompt": "현재 저장소 구조를 5줄로 요약해줘."
+  }
+}</code></pre>
+          <div class="note ok">같은 key를 재사용하면 같은 탭 세션 문맥이 유지됩니다.</div>
+        </article>
+      </section>
+
+      <section class="grid">
+        <article class="card split-6">
+          <h2>빠른 검증 체크리스트</h2>
+          <ul class="list-tight">
+            <li>제어 센터가 열렸는가</li>
+            <li>벤더 로그인 후 프롬프트 입력 가능 상태인가</li>
+            <li>MCP 클라이언트에서 <code>kgentool_query</code> 호출이 성공하는가</li>
+            <li><code>kgentool_status</code>에 tab/runtime 정보가 보이는가</li>
+          </ul>
+        </article>
+        <article class="card split-6">
+          <h2>문제 발생 시 다음 이동</h2>
+          <ul class="list-tight">
+            <li>설치/환경 이슈: <a href="./install.html">설치 문서</a></li>
+            <li>CLI 연결 이슈: <a href="./mcp-setup.html">MCP 연결 문서</a></li>
+            <li>로그인/팝업/CAPTCHA: <a href="./faq.html">FAQ</a></li>
+            <li>운영 패턴 정리: <a href="./workflows.html">워크플로 문서</a></li>
+          </ul>
+        </article>
+      </section>
+
+      <div class="footer">추천 흐름: 5분 시작 → MCP 연결 → 워크플로 → 아키텍처</div>
+    </main>
+    <script src="./assets/site.js"></script>
+  </body>
+</html>

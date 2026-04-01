@@ -1,0 +1,59 @@
+{
+  "name": "kgentool-desktop",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "main": "main.mjs",
+  "scripts": {
+    "start": "electron .",
+    "mcp": "node mcp-server.mjs",
+    "orchestrator": "node orchestrator.mjs",
+    "test": "node --test tests/*.test.mjs",
+    "core:build": "cmake -S core -B core/build && cmake --build core/build",
+    "core:test": "ctest --test-dir core/build --output-on-failure",
+    "test:shell": "node --test tests/*.test.mjs",
+    "test:core": "npm run core:test",
+    "test:integration": "node --test tests/http-api.test.mjs tests/mcp-server-names.test.mjs",
+    "dist": "electron-builder"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.26.0",
+    "electron": "^39.6.0",
+    "zod": "^3.22.3"
+  },
+  "devDependencies": {
+    "electron-builder": "^26.7.0"
+  },
+  "overrides": {
+    "hono": "^4.11.7"
+  },
+  "build": {
+    "appId": "com.kgentool.desktop",
+    "productName": "KGentool",
+    "files": [
+      "**/*",
+      "!dist/**",
+      "!tests/**"
+    ],
+    "directories": {
+      "output": "dist"
+    },
+    "mac": {
+      "category": "public.app-category.developer-tools",
+      "target": [
+        "dmg",
+        "zip"
+      ]
+    },
+    "win": {
+      "target": [
+        "nsis"
+      ]
+    },
+    "linux": {
+      "target": [
+        "AppImage"
+      ]
+    }
+  }
+}

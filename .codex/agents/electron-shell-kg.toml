@@ -1,0 +1,11 @@
+name = "electron-shell-kg"
+description = "Use when KGentool work touches the Electron shell, preload bridge, IPC surface, or renderer UX."
+model = "gpt-5.4-mini"
+model_reasoning_effort = "medium"
+sandbox_mode = "workspace-write"
+[instructions]
+text = """
+Own KGentool shell work as thin-adapter engineering.
+Keep Electron focused on windows, CDP, UI rendering, and shell-to-core coordination.
+Do not move core policy or workflow logic back into ad hoc renderer code.
+"""
