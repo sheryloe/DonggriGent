@@ -17,3 +17,10 @@ test('security: assertWithin throws', () => {
   assert.throws(() => assertWithin({ filePath: '/etc/passwd', allowedRoots: [root] }), /path_not_allowed/);
 });
 
+test('security: cross-drive absolute path is not treated as inside root on Windows', () => {
+  if (process.platform !== 'win32') return;
+  const root = 'C:\\agentify-root';
+  const otherDrive = 'D:\\outside\\file.txt';
+  assert.equal(isPathWithin({ filePath: otherDrive, allowedRoots: [root] }), false);
+});
+

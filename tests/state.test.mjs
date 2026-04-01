@@ -4,7 +4,16 @@ import os from 'node:os';
 import path from 'node:path';
 import fs from 'node:fs/promises';
 
-import { ensureToken, readToken, writeToken, defaultSettings, normalizeSettings, readSettings, writeSettings } from '../state.mjs';
+import {
+  ensureToken,
+  readToken,
+  writeToken,
+  tokenPath,
+  defaultSettings,
+  normalizeSettings,
+  readSettings,
+  writeSettings
+} from '../state.mjs';
 
 async function tempDir() {
   const base = await fs.mkdtemp(path.join(process.env.TEST_TMPDIR || '/tmp', 'kgentool-test-'));
@@ -26,6 +35,21 @@ test('state: writeToken overrides existing', async () => {
   assert.equal(await readToken(dir), 'abc123');
   await writeToken('def456', dir);
   assert.equal(await readToken(dir), 'def456');
+});
+
+test('state: token file is stored as encrypted envelope', async () => {
+  const dir = await tempDir();
+  await writeToken('very-secret-token', dir);
+  const raw = (await fs.readFile(tokenPath(dir), 'utf8')).trim();
+  assert.match(raw, /^enc-token:v1:/);
+  assert.equal(raw.includes('very-secret-token'), false);
+  assert.equal(await readToken(dir), 'very-secret-token');
+});
+
+test('state: readToken supports legacy plaintext token file', async () => {
+  const dir = await tempDir();
+  await fs.writeFile(tokenPath(dir), 'legacy-token\n', 'utf8');
+  assert.equal(await readToken(dir), 'legacy-token');
 });
 
 test('state: normalizeSettings defaults allowAuthPopups to true', () => {

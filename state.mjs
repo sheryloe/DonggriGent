@@ -1,6 +1,7 @@
 import path from 'node:path';
 import fs from 'node:fs/promises';
 import crypto from 'node:crypto';
+import os from 'node:os';
 import {
   PRODUCT_STATE_ENV,
   LEGACY_STATE_ENV,
@@ -9,6 +10,8 @@ import {
   productStateDir,
   legacyStateDir
 } from './product.mjs';
+
+const TOKEN_ENVELOPE_PREFIX = 'enc-token:v1:';
 
 async function atomicWriteFile(filePath, data, { mode } = {}) {
   const dir = path.dirname(filePath);
@@ -101,7 +104,9 @@ export async function readToken(stateDir = defaultStateDir()) {
   const tokenFromEnv = (process.env[PRODUCT_TOKEN_ENV] || process.env[LEGACY_TOKEN_ENV] || '').trim();
   if (tokenFromEnv) return tokenFromEnv;
   try {
-    return (await fs.readFile(tokenPath(stateDir), 'utf8')).trim();
+    const raw = (await fs.readFile(tokenPath(stateDir), 'utf8')).trim();
+    if (!raw) return null;
+    return decodeTokenEnvelope(raw, stateDir);
   } catch {
     return null;
   }
@@ -109,7 +114,8 @@ export async function readToken(stateDir = defaultStateDir()) {
 
 export async function writeToken(token, stateDir = defaultStateDir()) {
   await ensureStateDir(stateDir);
-  await atomicWriteFile(tokenPath(stateDir), `${token}\n`, { mode: 0o600 });
+  const envelope = encodeTokenEnvelope(String(token || '').trim(), stateDir);
+  await atomicWriteFile(tokenPath(stateDir), `${envelope}\n`, { mode: 0o600 });
 }
 
 export async function ensureToken(stateDir = defaultStateDir()) {
@@ -188,5 +194,50 @@ async function migrateLegacyStateDir(stateDir) {
   ];
   for (const [from, to] of files) {
     await copyIfMissing(path.join(legacy, from), path.join(target, to));
+  }
+}
+
+function tokenSecretMaterial(stateDir) {
+  const explicit = String(process.env.KGENTOOL_TOKEN_SECRET || '').trim();
+  if (explicit) return explicit;
+  const user = String(os.userInfo?.().username || 'unknown-user').trim() || 'unknown-user';
+  const host = String(os.hostname?.() || 'unknown-host').trim() || 'unknown-host';
+  return `${host}:${user}:${process.platform}:${process.arch}:${path.resolve(String(stateDir || ''))}`;
+}
+
+function encodeTokenEnvelope(token, stateDir) {
+  const plain = String(token || '').trim();
+  if (!plain) return plain;
+  const salt = crypto.randomBytes(16);
+  const iv = crypto.randomBytes(12);
+  const key = crypto.scryptSync(tokenSecretMaterial(stateDir), salt, 32);
+  const cipher = crypto.createCipheriv('aes-256-gcm', key, iv);
+  const ciphertext = Buffer.concat([cipher.update(plain, 'utf8'), cipher.final()]);
+  const tag = cipher.getAuthTag();
+  const payload = `${salt.toString('base64')}.${iv.toString('base64')}.${tag.toString('base64')}.${ciphertext.toString('base64')}`;
+  return `${TOKEN_ENVELOPE_PREFIX}${payload}`;
+}
+
+function decodeTokenEnvelope(raw, stateDir) {
+  const text = String(raw || '').trim();
+  if (!text) return null;
+  if (!text.startsWith(TOKEN_ENVELOPE_PREFIX)) return text;
+
+  const payload = text.slice(TOKEN_ENVELOPE_PREFIX.length);
+  const [saltB64, ivB64, tagB64, cipherB64] = payload.split('.');
+  if (!saltB64 || !ivB64 || !tagB64 || !cipherB64) return null;
+
+  try {
+    const salt = Buffer.from(saltB64, 'base64');
+    const iv = Buffer.from(ivB64, 'base64');
+    const tag = Buffer.from(tagB64, 'base64');
+    const ciphertext = Buffer.from(cipherB64, 'base64');
+    const key = crypto.scryptSync(tokenSecretMaterial(stateDir), salt, 32);
+    const decipher = crypto.createDecipheriv('aes-256-gcm', key, iv);
+    decipher.setAuthTag(tag);
+    const plain = Buffer.concat([decipher.update(ciphertext), decipher.final()]).toString('utf8').trim();
+    return plain || null;
+  } catch {
+    return null;
   }
 }

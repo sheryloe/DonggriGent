@@ -62,6 +62,7 @@ function mapErrorToHttp(error) {
   if (msg === 'invalid_vendor') return { code: 400, body: { error: 'invalid_vendor', data: error?.data || null } };
   if (msg === 'invalid_artifact_mode') return { code: 400, body: { error: 'invalid_artifact_mode', data: error?.data || null } };
   if (msg === 'relative_path_not_allowed') return { code: 400, body: { error: 'relative_path_not_allowed', data: error?.data || null } };
+  if (msg === 'path_not_allowed') return { code: 403, body: { error: 'path_not_allowed', data: error?.data || null } };
   if (msg === 'missing_url') return { code: 400, body: { error: 'missing_url' } };
   if (msg === 'missing_prompt') return { code: 400, body: { error: 'missing_prompt' } };
   if (msg === 'missing_attachment_path') return { code: 400, body: { error: 'missing_attachment_path', data: error?.data || null } };
@@ -138,6 +139,57 @@ function normalizeAbsoluteSinglePath(value, { field } = {}) {
     throw err;
   }
   return path.resolve(trimmed);
+}
+
+function dedupeAbsPaths(paths = []) {
+  const out = [];
+  const seen = new Set();
+  for (const item of paths) {
+    const raw = String(item || '').trim();
+    if (!raw) continue;
+    const abs = path.resolve(raw);
+    if (seen.has(abs)) continue;
+    seen.add(abs);
+    out.push(abs);
+  }
+  return out;
+}
+
+async function allowedLocalPathRoots({ stateDir, onWatchFoldersList } = {}) {
+  const roots = [];
+  roots.push(path.resolve(process.cwd()));
+  if (stateDir) {
+    roots.push(path.resolve(artifactsRoot(stateDir)));
+    roots.push(path.resolve(stateDir, 'watch-folders'));
+  }
+  try {
+    const folders = (await onWatchFoldersList?.()) || [];
+    for (const folder of folders) {
+      const folderPath = String(folder?.path || '').trim();
+      if (!folderPath || !path.isAbsolute(folderPath)) continue;
+      roots.push(path.resolve(folderPath));
+    }
+  } catch {}
+  return dedupeAbsPaths(roots);
+}
+
+function assertLocalPathsWithinRoots(paths, { field, allowedRoots } = {}) {
+  for (const filePath of Array.isArray(paths) ? paths : []) {
+    try {
+      assertWithin({ filePath, allowedRoots });
+    } catch (error) {
+      if (String(error?.message || '') === 'path_not_allowed') {
+        const err = new Error('path_not_allowed');
+        err.data = {
+          field: field || null,
+          path: String(filePath || ''),
+          allowedRoots: Array.isArray(allowedRoots) ? allowedRoots.map(String) : []
+        };
+        throw err;
+      }
+      throw error;
+    }
+  }
 }
 
 async function runExclusive(controller, fn) {
@@ -869,6 +921,9 @@ export function startHttpApi({
               throw err;
             }
             const merged = mergeQueryInputs({ bundle, promptPrefix, attachments, contextPaths });
+            const allowedRoots = await allowedLocalPathRoots({ stateDir, onWatchFoldersList });
+            assertLocalPathsWithinRoots(merged.attachments, { field: 'attachments', allowedRoots });
+            assertLocalPathsWithinRoots(merged.contextPaths, { field: 'contextPaths', allowedRoots });
             const effectiveBudget = {
               maxContextChars: positiveIntOr(body.maxContextChars, vendorBudget.maxContextChars, 500_000),
               maxFiles: positiveIntOr(body.maxContextFiles, vendorBudget.maxFiles, 500),
@@ -1104,11 +1159,16 @@ export function startHttpApi({
 
       if (url.pathname === '/bundles/save' && req.method === 'POST') {
         const body = await parseBody(req);
+        const attachments = normalizeAbsolutePathList(body.attachments, { field: 'attachments' });
+        const contextPaths = normalizeAbsolutePathList(body.contextPaths, { field: 'contextPaths' });
+        const allowedRoots = await allowedLocalPathRoots({ stateDir, onWatchFoldersList });
+        assertLocalPathsWithinRoots(attachments, { field: 'attachments', allowedRoots });
+        assertLocalPathsWithinRoots(contextPaths, { field: 'contextPaths', allowedRoots });
         const bundle = await saveBundle(stateDir, {
           name: body.name,
           promptPrefix: body.promptPrefix,
-          attachments: normalizeAbsolutePathList(body.attachments, { field: 'attachments' }),
-          contextPaths: normalizeAbsolutePathList(body.contextPaths, { field: 'contextPaths' })
+          attachments,
+          contextPaths
         });
         return sendJson(res, 200, { ok: true, bundle });
       }

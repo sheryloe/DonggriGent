@@ -10,7 +10,11 @@ export function isPathWithin({ filePath, allowedRoots }) {
   if (!roots.length) return false;
   for (const r of roots) {
     const rel = path.relative(r, fp);
-    if (!rel || (!rel.startsWith('..' + path.sep) && rel !== '..')) return true;
+    if (!rel) return true;
+    if (path.isAbsolute(rel)) continue;
+    const first = String(rel).split(path.sep)[0];
+    if (first === '..') continue;
+    return true;
   }
   return false;
 }

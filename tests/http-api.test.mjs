@@ -681,6 +681,7 @@ test('http-api: query packs context paths before forwarding to controller', asyn
     defaultTabId: 't0',
     serverId: 'sid-test',
     stateDir: dir,
+    onWatchFoldersList: async () => [{ name: 'inbox', path: dir }],
     getStatus: async () => ({ ok: true })
   });
   t.after(() => server.close());
@@ -735,6 +736,7 @@ test('http-api: query merges saved bundle inputs', async (t) => {
     defaultTabId: 't0',
     serverId: 'sid-test',
     stateDir: dir,
+    onWatchFoldersList: async () => [{ name: 'inbox', path: dir }],
     getStatus: async () => ({ ok: true })
   });
   t.after(() => server.close());
@@ -912,6 +914,43 @@ test('http-api: bundles/save rejects relative local paths on the direct HTTP sur
   assert.equal(saved.data.data?.field, 'attachments');
 });
 
+test('http-api: bundles/save rejects absolute paths outside allowed roots', async (t) => {
+  const stateDir = await fs.mkdtemp(testTmpPath('agentify-http-bundles-root-'));
+  const externalBase = path.join(path.parse(process.cwd()).root, 'agentify-http-bundles-external-');
+  const externalDir = await fs.mkdtemp(externalBase);
+  const externalFile = path.join(externalDir, 'external.txt');
+  await fs.writeFile(externalFile, 'x\n', 'utf8');
+  const tabs = {
+    listTabs: () => [{ id: 't0', key: 'default', vendorId: 'chatgpt' }],
+    ensureTab: async () => 't0',
+    createTab: async () => 't0',
+    closeTab: async () => true,
+    getControllerById: () => ({})
+  };
+  const server = await startHttpApi({
+    port: 0,
+    token: 'secret',
+    tabs,
+    defaultTabId: 't0',
+    serverId: 'sid-test',
+    stateDir,
+    getStatus: async () => ({ ok: true })
+  });
+  t.after(() => server.close());
+  const port = server.address().port;
+
+  const saved = await req({
+    port,
+    token: 'secret',
+    method: 'POST',
+    pth: '/bundles/save',
+    body: { name: 'repo-review', attachments: [externalFile] }
+  });
+  assert.equal(saved.res.status, 403);
+  assert.equal(saved.data.error, 'path_not_allowed');
+  assert.equal(saved.data.data?.field, 'attachments');
+});
+
 test('http-api: query returns 404 for missing bundle', async (t) => {
   const dir = await fs.mkdtemp(testTmpPath('agentify-http-bundle-missing-'));
   const controller = {
@@ -932,6 +971,7 @@ test('http-api: query returns 404 for missing bundle', async (t) => {
     defaultTabId: 't0',
     serverId: 'sid-test',
     stateDir: dir,
+    onWatchFoldersList: async () => [{ name: 'inbox', path: dir }],
     getStatus: async () => ({ ok: true })
   });
   t.after(() => server.close());
@@ -1000,6 +1040,7 @@ test('http-api: query returns 400 for missing context path', async (t) => {
     defaultTabId: 't0',
     serverId: 'sid-test',
     stateDir: dir,
+    onWatchFoldersList: async () => [{ name: 'inbox', path: dir }],
     getStatus: async () => ({ ok: true })
   });
   t.after(() => server.close());
@@ -1038,6 +1079,7 @@ test('http-api: query returns 400 for missing explicit attachment path', async (
     defaultTabId: 't0',
     serverId: 'sid-test',
     stateDir: dir,
+    onWatchFoldersList: async () => [{ name: 'inbox', path: dir }],
     getStatus: async () => ({ ok: true })
   });
   t.after(() => server.close());
@@ -1093,6 +1135,48 @@ test('http-api: query rejects relative local paths on the direct HTTP surface', 
   assert.equal(r.data.data?.field, 'attachments');
 });
 
+test('http-api: query rejects absolute paths outside allowed roots', async (t) => {
+  const stateDir = await fs.mkdtemp(testTmpPath('agentify-http-query-root-'));
+  const externalBase = path.join(path.parse(process.cwd()).root, 'agentify-http-query-external-');
+  const externalDir = await fs.mkdtemp(externalBase);
+  const externalFile = path.join(externalDir, 'external.txt');
+  await fs.writeFile(externalFile, 'outside\n', 'utf8');
+  const controller = {
+    runExclusive: async (fn) => await fn(),
+    query: async () => ({ text: 'ok', codeBlocks: [], meta: {} })
+  };
+  const tabs = {
+    listTabs: () => [{ id: 't0', key: 'default', vendorId: 'chatgpt' }],
+    ensureTab: async () => 't0',
+    createTab: async () => 't0',
+    closeTab: async () => true,
+    getControllerById: () => controller
+  };
+  const server = await startHttpApi({
+    port: 0,
+    token: 'secret',
+    tabs,
+    defaultTabId: 't0',
+    serverId: 'sid-test',
+    stateDir,
+    getStatus: async () => ({ ok: true })
+  });
+  t.after(() => server.close());
+  const port = server.address().port;
+
+  const r = await req({
+    port,
+    token: 'secret',
+    method: 'POST',
+    pth: '/query',
+    body: { prompt: 'hi', attachments: [externalFile] }
+  });
+
+  assert.equal(r.res.status, 403);
+  assert.equal(r.data.error, 'path_not_allowed');
+  assert.equal(r.data.data?.field, 'attachments');
+});
+
 test('http-api: invalid query input does not consume rate-limit budget', async (t) => {
   const dir = await fs.mkdtemp(testTmpPath('agentify-http-budget-validation-'));
   const missing = path.join(dir, 'missing.txt');
@@ -1118,6 +1202,7 @@ test('http-api: invalid query input does not consume rate-limit budget', async (
     defaultTabId: 't0',
     serverId: 'sid-test',
     stateDir: dir,
+    onWatchFoldersList: async () => [{ name: 'inbox', path: dir }],
     getSettings: async () => ({ maxInflightQueries: 2, maxQueriesPerMinute: 1, minTabGapMs: 0, minGlobalGapMs: 0, showTabsByDefault: false }),
     getStatus: async () => ({ ok: true })
   });
@@ -1963,6 +2048,7 @@ test('http-api: query returns vendor-specific context budget', async (t) => {
     defaultTabId: 't0',
     serverId: 'sid-test',
     stateDir: dir,
+    onWatchFoldersList: async () => [{ name: 'inbox', path: dir }],
     getStatus: async () => ({ ok: true })
   });
   t.after(() => server.close());
@@ -2001,6 +2087,7 @@ test('http-api: query returns effective override context budget metadata', async
     defaultTabId: 't0',
     serverId: 'sid-test',
     stateDir: dir,
+    onWatchFoldersList: async () => [{ name: 'inbox', path: dir }],
     getStatus: async () => ({ ok: true })
   });
   t.after(() => server.close());
@@ -2051,6 +2138,7 @@ test('http-api: query ignores invalid non-positive context budget overrides', as
     defaultTabId: 't0',
     serverId: 'sid-test',
     stateDir: dir,
+    onWatchFoldersList: async () => [{ name: 'inbox', path: dir }],
     getStatus: async () => ({ ok: true })
   });
   t.after(() => server.close());
@@ -2190,6 +2278,7 @@ test('http-api: oversized numeric overrides are clamped to bounded ceilings', as
     defaultTabId: 't0',
     serverId: 'sid-test',
     stateDir: dir,
+    onWatchFoldersList: async () => [{ name: 'inbox', path: dir }],
     getStatus: async () => ({ ok: true })
   });
   t.after(() => server.close());
