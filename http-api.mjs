@@ -46,7 +46,13 @@ async function parseBody(req, { maxBytes = 2_000_000 } = {}) {
 function authOk(req, token) {
   const hdr = String(req.headers.authorization || '');
   if (!hdr.startsWith('Bearer ')) return false;
-  return hdr.slice('Bearer '.length).trim() === token;
+  const presented = hdr.slice('Bearer '.length).trim();
+  const expected = String(token || '').trim();
+  if (!presented || !expected) return false;
+  const presentedBuf = Buffer.from(presented, 'utf8');
+  const expectedBuf = Buffer.from(expected, 'utf8');
+  if (presentedBuf.length !== expectedBuf.length) return false;
+  return crypto.timingSafeEqual(presentedBuf, expectedBuf);
 }
 
 function mapErrorToHttp(error) {

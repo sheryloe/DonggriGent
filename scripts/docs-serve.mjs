@@ -26,11 +26,17 @@ const MIME = new Map([
 ]);
 
 function safeJoin(root, requestPath) {
-  const decoded = decodeURIComponent(requestPath || '/');
+  let decoded = '/';
+  try {
+    decoded = decodeURIComponent(requestPath || '/');
+  } catch {
+    return null;
+  }
   const clean = decoded.split('?')[0].split('#')[0];
   const rel = clean.replace(/^\/+/, '');
   const resolved = path.resolve(root, rel);
-  if (!resolved.startsWith(root)) return null;
+  const relative = path.relative(root, resolved);
+  if (relative.startsWith('..') || path.isAbsolute(relative)) return null;
   return resolved;
 }
 

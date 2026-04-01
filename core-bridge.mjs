@@ -29,12 +29,14 @@ class ChildProcessTransport {
 
   start() {
     if (this.child) return;
-    this.child = spawn(this.command, this.args, {
+    const child = spawn(this.command, this.args, {
       cwd: this.cwd,
       env: this.env,
       stdio: ['pipe', 'pipe', 'inherit']
     });
-    this.child.stdout.on('data', (chunk) => {
+    this.child = child;
+
+    child.stdout.on('data', (chunk) => {
       this.buffer += String(chunk || '');
       let idx = this.buffer.indexOf('\n');
       while (idx >= 0) {
@@ -44,10 +46,19 @@ class ChildProcessTransport {
         idx = this.buffer.indexOf('\n');
       }
     });
-    this.child.on('exit', () => {
-      const error = new Error('core_transport_closed');
-      for (const deferred of this.pending.values()) deferred.reject(error);
+    child.on('error', (error) => {
+      const transportError = new Error('core_transport_start_failed');
+      transportError.data = { code: 'core_transport_start_failed', cause: String(error?.message || 'spawn_failed') };
+      for (const deferred of this.pending.values()) deferred.reject(transportError);
       this.pending.clear();
+      this.child = null;
+    });
+    child.on('exit', (exitCode, signal) => {
+      const transportError = new Error('core_transport_closed');
+      transportError.data = { code: 'core_transport_closed', exitCode, signal: signal || null };
+      for (const deferred of this.pending.values()) deferred.reject(transportError);
+      this.pending.clear();
+      this.child = null;
     });
   }
 
@@ -73,6 +84,11 @@ class ChildProcessTransport {
 
   async request(name, payload = {}) {
     this.start();
+    if (!this.child?.stdin || this.child.killed || this.child.exitCode != null) {
+      const error = new Error('core_transport_closed');
+      error.data = { code: 'core_transport_closed' };
+      throw error;
+    }
     const id = `req-${++this.seq}`;
     const envelope = {
       id,
@@ -83,7 +99,15 @@ class ChildProcessTransport {
     const promise = new Promise((resolve, reject) => {
       this.pending.set(id, { resolve, reject });
     });
-    this.child.stdin.write(`${JSON.stringify(envelope)}\n`);
+    this.child.stdin.write(`${JSON.stringify(envelope)}\n`, (error) => {
+      if (!error) return;
+      const deferred = this.pending.get(id);
+      if (!deferred) return;
+      this.pending.delete(id);
+      const transportError = new Error('core_transport_io_failed');
+      transportError.data = { code: 'core_transport_io_failed', cause: String(error?.message || 'stdin_write_failed') };
+      deferred.reject(transportError);
+    });
     return await promise;
   }
 
@@ -106,7 +130,14 @@ class HybridTransport {
     } catch (error) {
       const code = error?.data?.code || null;
       const message = String(error?.message || '');
-      if (code === 'unsupported_core_command' || message.startsWith('unsupported_core_command')) {
+      if (
+        code === 'unsupported_core_command' ||
+        code === 'core_transport_start_failed' ||
+        code === 'core_transport_closed' ||
+        code === 'core_transport_io_failed' ||
+        message.startsWith('unsupported_core_command') ||
+        message.startsWith('core_transport_')
+      ) {
         return await this.fallback.request(name, payload);
       }
       throw error;

@@ -1,35 +1,3 @@
-const CHATGPT_AUTH_HOST_ALLOWLIST = [
-  // OpenAI / ChatGPT auth surfaces.
-  'chatgpt.com',
-  '.chatgpt.com',
-  'openai.com',
-  '.openai.com',
-
-  // Common SSO providers used by ChatGPT users.
-  'accounts.google.com',
-  'accounts.youtube.com',
-  'myaccount.google.com',
-  'ogs.google.com',
-  '.google.com',
-  '.googleusercontent.com',
-  'login.live.com',
-  '.live.com',
-  '.microsoft.com',
-  '.microsoftonline.com',
-  'appleid.apple.com',
-  '.apple.com',
-  'github.com',
-  '.github.com',
-
-  // X/Twitter auth surfaces (used by Grok accounts).
-  'x.com',
-  '.x.com',
-  'twitter.com',
-  '.twitter.com',
-  'grok.com',
-  '.grok.com'
-];
-
 const SUPPORTED_VENDOR_IDS = ['chatgpt', 'perplexity', 'claude', 'aistudio', 'gemini', 'grok'];
 const VENDOR_HOST_ALLOWLIST = [
   'chatgpt.com',
@@ -45,6 +13,80 @@ const VENDOR_HOST_ALLOWLIST = [
   'grok.com',
   '.grok.com'
 ];
+
+const VENDOR_AUTH_HOST_ALLOWLIST = {
+  chatgpt: [
+    'chatgpt.com',
+    '.chatgpt.com',
+    'openai.com',
+    '.openai.com',
+    'accounts.google.com',
+    'accounts.youtube.com',
+    'myaccount.google.com',
+    'ogs.google.com',
+    '.google.com',
+    '.googleusercontent.com',
+    'login.live.com',
+    '.live.com',
+    '.microsoft.com',
+    '.microsoftonline.com',
+    'appleid.apple.com',
+    '.apple.com'
+  ],
+  perplexity: [
+    'perplexity.ai',
+    '.perplexity.ai',
+    'accounts.google.com',
+    'accounts.youtube.com',
+    'myaccount.google.com',
+    'ogs.google.com',
+    '.google.com',
+    '.googleusercontent.com',
+    'appleid.apple.com',
+    '.apple.com'
+  ],
+  claude: [
+    'claude.ai',
+    '.claude.ai',
+    'accounts.google.com',
+    'accounts.youtube.com',
+    'myaccount.google.com',
+    'ogs.google.com',
+    '.google.com',
+    '.googleusercontent.com'
+  ],
+  aistudio: [
+    'aistudio.google.com',
+    '.aistudio.google.com',
+    'accounts.google.com',
+    'accounts.youtube.com',
+    'myaccount.google.com',
+    'ogs.google.com',
+    '.google.com',
+    '.googleusercontent.com'
+  ],
+  gemini: [
+    'gemini.google.com',
+    '.gemini.google.com',
+    'accounts.google.com',
+    'accounts.youtube.com',
+    'myaccount.google.com',
+    'ogs.google.com',
+    '.google.com',
+    '.googleusercontent.com'
+  ],
+  grok: [
+    'grok.com',
+    '.grok.com',
+    'x.com',
+    '.x.com',
+    'twitter.com',
+    '.twitter.com'
+  ]
+};
+
+const AUTH_HINT_TOKENS = ['oauth', 'auth', 'signin', 'login', 'callback', 'consent'];
+const AUTH_POPUP_DISPOSITIONS = new Set(['new-window', 'foreground-tab', 'background-tab']);
 
 function normalizeHostname(hostname) {
   return String(hostname || '').trim().toLowerCase().replace(/\.+$/, '');
@@ -73,8 +115,10 @@ export function isAllowedAuthPopupUrl(url, { vendorId = 'chatgpt' } = {}) {
   // Keep behavior conservative: only explicitly allow supported vendor auth flows.
   const vendor = String(vendorId || 'chatgpt').trim().toLowerCase();
   if (!SUPPORTED_VENDOR_IDS.includes(vendor)) return false;
+  const hostAllowlist = Array.isArray(VENDOR_AUTH_HOST_ALLOWLIST[vendor]) ? VENDOR_AUTH_HOST_ALLOWLIST[vendor] : [];
+  if (!hostAllowlist.length) return false;
 
-  return CHATGPT_AUTH_HOST_ALLOWLIST.some((pattern) => hostMatchesPattern(host, pattern));
+  return hostAllowlist.some((pattern) => hostMatchesPattern(host, pattern));
 }
 
 function isAllowedBlankAuthPopup({
@@ -92,28 +136,26 @@ function isAllowedBlankAuthPopup({
 
   const disp = String(disposition || '').trim().toLowerCase();
   const frame = String(frameName || '').trim().toLowerCase();
-  const looksLikeAuthPopup =
-    frame.includes('oauth') ||
-    frame.includes('auth') ||
-    frame.includes('signin') ||
-    frame.includes('login') ||
-    disp === 'new-window' ||
-    disp === 'foreground-tab' ||
-    disp === 'background-tab' ||
-    disp === '';
-  if (!looksLikeAuthPopup) return false;
+  const frameHasAuthHint = AUTH_HINT_TOKENS.some((token) => frame.includes(token));
 
+  let openerPath = '';
   let openerHost = '';
   try {
-    openerHost = normalizeHostname(new URL(String(openerUrl || '')).hostname);
+    const opener = new URL(String(openerUrl || ''));
+    openerHost = normalizeHostname(opener.hostname);
+    openerPath = String(opener.pathname || '').toLowerCase();
   } catch {
     return false;
   }
   if (!openerHost) return false;
 
   const isVendorHost = VENDOR_HOST_ALLOWLIST.some((pattern) => hostMatchesPattern(openerHost, pattern));
-  const isTrustedAuthHost = CHATGPT_AUTH_HOST_ALLOWLIST.some((pattern) => hostMatchesPattern(openerHost, pattern));
-  return isVendorHost || isTrustedAuthHost;
+  if (!isVendorHost) return false;
+
+  const openerHasAuthHint = AUTH_HINT_TOKENS.some((token) => openerPath.includes(token));
+  const hasKnownDisposition = AUTH_POPUP_DISPOSITIONS.has(disp);
+  const looksLikeAuthPopup = frameHasAuthHint || openerHasAuthHint || hasKnownDisposition;
+  return looksLikeAuthPopup;
 }
 
 export function shouldAllowPopup({
