@@ -94,6 +94,30 @@ class ChildProcessTransport {
   }
 }
 
+class HybridTransport {
+  constructor(primary, fallback) {
+    this.primary = primary;
+    this.fallback = fallback;
+  }
+
+  async request(name, payload = {}) {
+    try {
+      return await this.primary.request(name, payload);
+    } catch (error) {
+      const code = error?.data?.code || null;
+      const message = String(error?.message || '');
+      if (code === 'unsupported_core_command' || message.startsWith('unsupported_core_command')) {
+        return await this.fallback.request(name, payload);
+      }
+      throw error;
+    }
+  }
+
+  async close() {
+    await Promise.allSettled([this.primary.close?.(), this.fallback.close?.()]);
+  }
+}
+
 async function fileExists(filePath) {
   try {
     await fs.stat(filePath);
@@ -120,11 +144,28 @@ export async function createCoreBridge({
   const binary = explicitBin || defaultBin;
 
   if (await fileExists(binary)) {
-    return new ChildProcessTransport({
+    const fallback = new InProcessTransport(
+      createCoreHost({
+        stateDir,
+        agentsDir,
+        workflowsPath,
+        watchFolders,
+        openWatchFolder,
+        scanWatchFolder,
+        executeWorkflowStep,
+        runQuery,
+        stopQuery,
+        getRuntimeStatus
+      })
+    );
+
+    const primary = new ChildProcessTransport({
       command: binary,
       cwd: process.cwd(),
       env: { ...process.env, KGENTOOL_STATE_DIR: stateDir }
     });
+
+    return new HybridTransport(primary, fallback);
   }
 
   return new InProcessTransport(

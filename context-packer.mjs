@@ -295,7 +295,8 @@ export async function prepareQueryContext({
 
   for (const file of files) {
     const rel = roots.length ? path.relative(path.dirname(roots[0].path), file.absPath) : path.basename(file.absPath);
-    const named = rel && !rel.startsWith('..') ? rel : path.basename(file.absPath);
+    const relPosix = String(rel || '').replace(/\\/g, '/');
+    const named = relPosix && !relPosix.startsWith('..') ? relPosix : path.basename(file.absPath);
     if (looksBinaryByName(file.absPath)) {
       if (attachedFiles.length < maxAttachmentFiles && file.size <= maxBinaryAttachmentBytes && !attachedSet.has(file.absPath)) {
         attachedFiles.push({ path: file.absPath, reason: 'context-binary', size: file.size });

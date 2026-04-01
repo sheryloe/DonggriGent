@@ -77,8 +77,8 @@ test('bundle-store: ignores legacy relative paths when reading persisted bundles
   );
 
   const got = await getBundle(stateDir, 'legacy');
-  assert.equal(got?.attachments.includes('/tmp/abs.txt'), true);
-  assert.equal(got?.contextPaths.includes('/tmp/abs-dir'), true);
+  assert.equal(got?.attachments.includes(path.resolve('/tmp/abs.txt')), true);
+  assert.equal(got?.contextPaths.includes(path.resolve('/tmp/abs-dir')), true);
   assert.equal(got?.attachments.some((p) => !path.isAbsolute(p)), false);
   assert.equal(got?.contextPaths.some((p) => !path.isAbsolute(p)), false);
   assert.equal(got?.attachments.includes(path.resolve('./README.md')), false);

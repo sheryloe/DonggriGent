@@ -1,3 +1,4 @@
+import fs from 'node:fs/promises';
 import path from 'node:path';
 import { parseTomlFile } from './simple-toml.mjs';
 

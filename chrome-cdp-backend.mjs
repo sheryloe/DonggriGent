@@ -550,9 +550,11 @@ export class ChromeCdpBrowserBackend {
         profileName: this.profileName,
         startUrl: 'about:blank'
       });
-      this.chromeProcess = spawn(executable, args, {
-        stdio: 'ignore'
-      });
+      const spawnOptions = { stdio: 'ignore' };
+      if (process.platform === 'win32' && path.extname(executable).toLowerCase() !== '.exe') {
+        spawnOptions.shell = true;
+      }
+      this.chromeProcess = spawn(executable, args, spawnOptions);
       this.chromeProcess.unref?.();
 
       let version;
