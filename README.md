@@ -8,6 +8,7 @@ KGentool은 **로컬 브라우저 제어 + MCP 연동 + 워크플로 자동화**
 - [설치/실행 문서](./docs/install.html)
 - [MCP 연결 가이드](./docs/mcp-setup.html)
 - [GitHub Pages 문서 홈](./docs/index.html)
+- [공식 GitHub Pages 주소](https://sheryloe.github.io/DonggriGent/)
 
 ## KGentool이 해결하는 문제
 AI CLI를 쓰다 보면 아래가 반복됩니다.
@@ -157,6 +158,7 @@ KGentool은 2개 백엔드를 지원합니다.
 
 ## 문서 허브
 ### GitHub Pages 문서
+- [공식 주소](https://sheryloe.github.io/DonggriGent/)
 - [문서 홈](./docs/index.html)
 - [설치](./docs/install.html)
 - [MCP 연결](./docs/mcp-setup.html)

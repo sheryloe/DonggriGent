@@ -4,6 +4,7 @@ KGentool Wiki는 운영형 참조 문서입니다.
 README는 유입/개요, GitHub Pages는 도입/설치, Wiki는 실무 운영 기준을 담당합니다.
 
 ## 빠른 링크
+- [공식 GitHub Pages](https://sheryloe.github.io/DonggriGent/)
 - [Installation](./Installation.md)
 - [Quickstart](./Quickstart.md)
 - [MCP-Setup](./MCP-Setup.md)
