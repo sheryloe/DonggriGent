@@ -1,40 +1,39 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <!-- 배포 시 도메인을 실제 GitHub Pages URL로 교체하세요. -->
   <url>
-    <loc>https://YOUR_GITHUB_USERNAME.github.io/YOUR_REPOSITORY/</loc>
+    <loc>https://sheryloe.github.io/DonggriGent/</loc>
     <lastmod>2026-04-01</lastmod>
   </url>
   <url>
-    <loc>https://YOUR_GITHUB_USERNAME.github.io/YOUR_REPOSITORY/getting-started.html</loc>
+    <loc>https://sheryloe.github.io/DonggriGent/getting-started.html</loc>
     <lastmod>2026-04-01</lastmod>
   </url>
   <url>
-    <loc>https://YOUR_GITHUB_USERNAME.github.io/YOUR_REPOSITORY/install.html</loc>
+    <loc>https://sheryloe.github.io/DonggriGent/install.html</loc>
     <lastmod>2026-04-01</lastmod>
   </url>
   <url>
-    <loc>https://YOUR_GITHUB_USERNAME.github.io/YOUR_REPOSITORY/mcp-setup.html</loc>
+    <loc>https://sheryloe.github.io/DonggriGent/mcp-setup.html</loc>
     <lastmod>2026-04-01</lastmod>
   </url>
   <url>
-    <loc>https://YOUR_GITHUB_USERNAME.github.io/YOUR_REPOSITORY/browser-backends.html</loc>
+    <loc>https://sheryloe.github.io/DonggriGent/browser-backends.html</loc>
     <lastmod>2026-04-01</lastmod>
   </url>
   <url>
-    <loc>https://YOUR_GITHUB_USERNAME.github.io/YOUR_REPOSITORY/workflows.html</loc>
+    <loc>https://sheryloe.github.io/DonggriGent/workflows.html</loc>
     <lastmod>2026-04-01</lastmod>
   </url>
   <url>
-    <loc>https://YOUR_GITHUB_USERNAME.github.io/YOUR_REPOSITORY/architecture.html</loc>
+    <loc>https://sheryloe.github.io/DonggriGent/architecture.html</loc>
     <lastmod>2026-04-01</lastmod>
   </url>
   <url>
-    <loc>https://YOUR_GITHUB_USERNAME.github.io/YOUR_REPOSITORY/faq.html</loc>
+    <loc>https://sheryloe.github.io/DonggriGent/faq.html</loc>
     <lastmod>2026-04-01</lastmod>
   </url>
   <url>
-    <loc>https://YOUR_GITHUB_USERNAME.github.io/YOUR_REPOSITORY/slides.html</loc>
+    <loc>https://sheryloe.github.io/DonggriGent/slides.html</loc>
     <lastmod>2026-04-01</lastmod>
   </url>
 </urlset>

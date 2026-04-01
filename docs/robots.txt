@@ -1,5 +1,4 @@
 User-agent: *
 Allow: /
 
-# GitHub Pages 배포 도메인으로 변경하세요.
-Sitemap: https://YOUR_GITHUB_USERNAME.github.io/YOUR_REPOSITORY/sitemap.xml
+Sitemap: https://sheryloe.github.io/DonggriGent/sitemap.xml
