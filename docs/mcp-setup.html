@@ -3,13 +3,11 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>KGentool MCP 연결 가이드 | Codex · Claude Code · OpenCode</title>
-    <meta name="description" content="KGentool MCP 연결 가이드. Codex, Claude Code, OpenCode에서 kgentool-desktop 서버를 등록하고 검증하는 방법을 설명합니다." />
-    <meta property="og:type" content="website" />
-    <meta property="og:locale" content="ko_KR" />
-    <meta property="og:site_name" content="KGentool Docs" />
-    <meta property="og:title" content="KGentool MCP 연결 가이드" />
-    <meta property="og:description" content="Codex/Claude Code/OpenCode MCP 등록과 검증 절차를 한글로 정리한 문서." />
+    <title>DonggriGent MCP 등록 가이드 | Codex · Claude</title>
+    <meta
+      name="description"
+      content="Codex/Claude Code에서 DonggriGent MCP 서버를 등록하고 검증하는 방법을 단계별로 설명합니다."
+    />
     <link rel="canonical" href="./mcp-setup.html" />
     <link rel="stylesheet" href="./assets/styles.css" />
   </head>
@@ -17,60 +15,78 @@
     <header class="topbar">
       <div class="topbar-inner">
         <div class="brand">
-          <div class="brand-badge">KG</div>
-          <span>KGentool Docs</span>
+          <div class="brand-badge">DG</div>
+          <span>DonggriGent Docs</span>
         </div>
         <nav class="nav">
           <a href="./index.html" data-path="index.html">홈</a>
-          <a href="./getting-started.html" data-path="getting-started.html">5분 시작</a>
+          <a href="./getting-started.html" data-path="getting-started.html">빠른 시작</a>
           <a href="./install.html" data-path="install.html">설치</a>
-          <a href="./mcp-setup.html" data-path="mcp-setup.html">MCP 연결</a>
-          <a href="./browser-backends.html" data-path="browser-backends.html">브라우저</a>
+          <a href="./mcp-setup.html" data-path="mcp-setup.html">MCP 등록</a>
+          <a href="./browser-backends.html" data-path="browser-backends.html">브라우저 백엔드</a>
           <a href="./workflows.html" data-path="workflows.html">워크플로</a>
           <a href="./architecture.html" data-path="architecture.html">아키텍처</a>
           <a href="./faq.html" data-path="faq.html">FAQ</a>
-          <a href="./slides.html" data-path="slides.html">슬라이드</a>
         </nav>
       </div>
     </header>
 
     <main class="page">
       <section class="hero">
-        <h1>MCP 연결 가이드</h1>
-        <p>KGentool 서버명은 <code>kgentool-desktop</code>이며, 기본 MCP 엔트리는 <code>node mcp-server.mjs</code> 입니다.</p>
+        <h1>MCP 등록 가이드</h1>
+        <p><strong>누구를 위한 문서:</strong> 앱 실행은 완료했고 Codex/Claude에 MCP를 연결하려는 사용자</p>
+        <p><strong>완료 기준:</strong> `kgentool_tabs`, `kgentool_status`, `kgentool_workflow_run` 호출 가능</p>
       </section>
 
       <section class="grid">
         <article class="card split-6">
-          <h2>Codex</h2>
-          <pre><code>codex mcp add kgentool-desktop -- node /ABS/PATH/TO/desktop/mcp-server.mjs
+          <h2>사전 확인</h2>
+          <pre><code>cd ~/DonggriGent
+npm run start</code></pre>
+          <p>앱이 먼저 실행 중이어야 MCP 호출이 정상 동작합니다.</p>
+          <div class="note warn">`~/.kgentool/`에는 로컬 인증/런타임 정보가 저장됩니다. 공유/업로드하지 마세요.</div>
+        </article>
+        <article class="card split-6">
+          <h2>절대 경로 확인</h2>
+          <pre><code>cd ~/DonggriGent
+pwd
+# 예: /home/&lt;USER&gt;/DonggriGent</code></pre>
+          <p>`mcp-server.mjs`는 위 경로 기준으로 `/home/$USER/DonggriGent/mcp-server.mjs`를 사용합니다.</p>
+        </article>
+      </section>
+
+      <section class="grid">
+        <article class="card split-6">
+          <h2>Codex 등록</h2>
+          <pre><code>codex mcp add kgentool-desktop -- node /home/$USER/DonggriGent/mcp-server.mjs
 codex mcp list</code></pre>
         </article>
         <article class="card split-6">
-          <h2>Claude Code</h2>
-          <pre><code>claude mcp add --transport stdio kgentool-desktop -- node /ABS/PATH/TO/desktop/mcp-server.mjs
+          <h2>Claude Code 등록</h2>
+          <pre><code>claude mcp add --transport stdio kgentool-desktop -- node /home/$USER/DonggriGent/mcp-server.mjs
 claude mcp list</code></pre>
         </article>
       </section>
 
       <section class="grid">
         <article class="card">
-          <h2>OpenCode</h2>
-          <p>quickstart 스크립트의 <code>--client opencode</code> 또는 <code>--client all</code> 사용을 권장합니다.</p>
-          <pre><code>./scripts/quickstart.sh --client opencode</code></pre>
-        </article>
-        <article class="card">
-          <h2>등록 후 최소 검증</h2>
-          <ol class="list-tight">
-            <li><code>kgentool_tabs</code> 호출로 연결 확인</li>
-            <li><code>kgentool_status</code> 호출로 상태 확인</li>
-            <li><code>kgentool_query</code>로 짧은 질의 1회 실행</li>
-          </ol>
+          <h2>등록 후 검증 호출</h2>
+          <p>아래 JSON은 터미널 명령이 아니라 MCP 도구 호출 예시입니다.</p>
           <pre><code>{
-  "tool": "kgentool_query",
+  "tool": "kgentool_tabs",
+  "arguments": {}
+}</code></pre>
+          <pre><code>{
+  "tool": "kgentool_status",
   "arguments": {
-    "key": "mcp-check",
-    "prompt": "연결 점검용 응답 한 줄만 반환해줘."
+    "key": "mcp-check"
+  }
+}</code></pre>
+          <pre><code>{
+  "tool": "kgentool_workflow_run",
+  "arguments": {
+    "workflowName": "mcp_extension_ko",
+    "prompt": "현재 MCP 도구 세트에서 확장 우선순위와 검증 계획을 한국어로 정리해줘."
   }
 }</code></pre>
         </article>
@@ -78,37 +94,35 @@ claude mcp list</code></pre>
 
       <section class="grid">
         <article class="card split-6">
-          <h2>주요 도구(신규)</h2>
+          <h2>레거시/선택 사항</h2>
           <ul class="list-tight">
-            <li><code>kgentool_query</code></li>
-            <li><code>kgentool_status</code></li>
-            <li><code>kgentool_tabs</code></li>
-            <li><code>kgentool_save_artifacts</code></li>
-            <li><code>kgentool_workflow_run</code></li>
+            <li>기본 사용: `kgentool_*`</li>
+            <li>기존 자동화 호환이 필요할 때만: `agentify_*`</li>
           </ul>
-          <div class="note ok"><code>kgentool_workflow_run</code>은 <code>*_ko</code> 워크플로(<code>cpp_refactor_ko</code> 등)를 기본 운영값으로 권장합니다.</div>
         </article>
         <article class="card split-6">
-          <h2>호환 도구(기존)</h2>
-          <p>기존 자동화가 있으면 <code>agentify_*</code> alias를 그대로 사용할 수 있습니다.</p>
-          <div class="note">신규 스크립트/프롬프트 작성 시에는 <code>kgentool_*</code> 네임스페이스를 권장합니다.</div>
+          <h2>다음 단계</h2>
+          <ul class="list-tight">
+            <li><a href="./workflows.html">워크플로 문서</a>에서 `*_ko` 시나리오 선택</li>
+            <li><a href="./faq.html">FAQ</a>에서 로그인/포트/권한 이슈 확인</li>
+          </ul>
         </article>
       </section>
 
       <section class="grid">
         <article class="card">
-          <h2>문제 해결</h2>
-          <ul class="list-tight">
-            <li>도구가 보이지 않으면: CLI 재시작 후 <code>mcp list</code> 재확인</li>
-            <li>응답이 지연되면: 앱 실행 여부, 로그인 상태, activeQuery 확인</li>
-            <li>로그인/검증 화면이면: 브라우저 창에서 수동 처리 후 재시도</li>
-          </ul>
-          <p>상세 예외 상황은 <a href="./faq.html">FAQ</a> 문서 참고.</p>
+          <h2>이전/다음 단계</h2>
+          <div class="cta-row">
+            <a class="btn btn-primary" href="./install.html">이전: 설치</a>
+            <a class="btn btn-primary" href="./index.html">홈</a>
+            <a class="btn btn-primary" href="./workflows.html">다음: 워크플로</a>
+          </div>
         </article>
       </section>
 
-      <div class="footer">다음 문서: <a href="./workflows.html">워크플로 운영 가이드</a></div>
+      <div class="footer">다음 문서: <a href="./workflows.html">워크플로 가이드</a></div>
     </main>
+
     <script src="./assets/site.js"></script>
   </body>
 </html>

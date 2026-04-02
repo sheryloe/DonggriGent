@@ -1,228 +1,189 @@
-# KGentool: MCP 도구 + AI 워크플로 허브 (한국어)
+# DonggriGent
 
-KGentool은 **로컬 브라우저 제어 + MCP 연동 + 워크플로 자동화**를 한 번에 제공하는 한국형 AI 데스크톱입니다.  
-이미 로그인된 ChatGPT/Claude/Gemini 같은 웹 세션을 그대로 활용해, Codex/Claude Code/OpenCode에서 반복 작업을 실행할 수 있습니다.
+DonggriGent는 **브라우저 로그인 세션을 유지한 상태로** AI CLI 작업을 자동화하는 MCP 기반 데스크톱 도구입니다.  
+Codex/Claude Code에서 `kgentool_*` 도구를 호출해 질의, 상태 확인, 워크플로 실행을 한 흐름으로 처리합니다.  
+기본 추천 워크플로는 `*_ko`이며, 한국어 출력/리뷰 기준으로 바로 운영할 수 있게 구성되어 있습니다.
 
-## 설치하기 전에 바로 보는 핵심 CTA
-- [5분 시작 가이드](./docs/getting-started.html)
-- [설치/실행 문서](./docs/install.html)
-- [MCP 연결 가이드](./docs/mcp-setup.html)
-- [GitHub Pages 문서 홈](./docs/index.html)
-- [공식 GitHub Pages 주소](https://sheryloe.github.io/DonggriGent/)
+## 바로가기
 
-## KGentool이 해결하는 문제
-AI CLI를 쓰다 보면 아래가 반복됩니다.
-- 웹에서 로그인한 세션과 CLI 흐름이 분리되어 작업 전환 비용이 큼
-- 프로젝트별 맥락(탭/첨부/산출물/워치 폴더)이 매번 초기화됨
-- 이미지/파일 결과를 다음 프롬프트로 재활용하기 번거로움
+- GitHub Pages: [https://sheryloe.github.io/DonggriGent/](https://sheryloe.github.io/DonggriGent/)
+- 문서 홈: [./docs/index.html](./docs/index.html)
+- 빠른 시작: [./docs/getting-started.html](./docs/getting-started.html)
+- 설치: [./docs/install.html](./docs/install.html)
+- MCP 연결: [./docs/mcp-setup.html](./docs/mcp-setup.html)
+- 워크플로: [./docs/workflows.html](./docs/workflows.html)
 
-KGentool은 이 문제를 다음 방식으로 줄입니다.
-- `MCP`로 CLI와 브라우저 세션을 연결
-- `탭 키(key)`로 프로젝트별 상태를 지속
-- `산출물 저장`과 `워치 폴더`로 파일 루프를 자동화
-- `workflow.run`으로 멀티 에이전트 실행을 표준화
+## 누구에게 맞는가
 
-## 왜 KGentool인가
-- **MCP 우선 설계**: `kgentool_*` 도구와 `agentify_*` 호환 alias를 동시에 제공
-- **실사용 세션 기반**: 별도 API 키 마이그레이션 없이 웹 UI 구독을 활용
-- **한국어 우선 UX**: 제어 센터/문서/운영 흐름을 한국어 중심으로 구성
-- **아키텍처 분리**: JS Shell(브라우저 제어) + C++ Core(런타임/워크플로) 구조로 확장성 확보
+- 브라우저 로그인 세션을 유지한 채 AI 작업을 반복 실행해야 하는 개발자
+- 프로젝트별 `key`로 작업 문맥을 분리/재사용하고 싶은 팀
+- 질의 → 산출물 저장 → 다음 작업 첨부까지 한 루프로 돌리고 싶은 사용자
 
-## 지원 벤더(현재 v1)
-- `chatgpt.com`
-- `claude.ai`
-- `perplexity.ai`
-- `aistudio.google.com`
-- `gemini.google.com`
-- `grok.com`
+## WSL 기준 5분 시작
 
-## 5분 시작
-1. 저장소 클론
+> 아래 명령은 **WSL(Ubuntu)** 기준입니다.
+> 요구사항: **Node.js 20+**, **npm 10+**, GUI 확인을 위한 **WSLg**(또는 Windows에서 `npm run start` 실행).
+
 ```bash
-git clone https://github.com/agentify-sh/desktop.git
-cd desktop
-```
-2. 빠른 시작 스크립트 실행
-```bash
-./scripts/quickstart.sh
-```
-3. 제어 센터에서 기본 탭 열기 후 벤더 로그인
-4. CLI에서 MCP 서버 등록 후 첫 질의 실행
-
-상세 절차는 [getting-started](./docs/getting-started.html) 문서에 정리되어 있습니다.
-
-## 설치 및 실행
-### 빠른 시작(권장)
-```bash
-./scripts/quickstart.sh
-```
-
-옵션 예시:
-```bash
-./scripts/quickstart.sh --show-tabs
-./scripts/quickstart.sh --foreground
-./scripts/quickstart.sh --client codex
-./scripts/quickstart.sh --client all
-```
-
-### 수동 실행
-```bash
+cd ~
+git clone https://github.com/sheryloe/DonggriGent.git
+cd DonggriGent
 npm ci
 npm run start
 ```
 
-### C++ 코어 빌드(선택)
-```bash
-npm run core:build
-npm run core:test
-```
+실행 후 데스크톱 창이 열리면 사용하려는 벤더(예: ChatGPT) 계정으로 로그인합니다.
+> 아래 MCP 등록 명령은 저장소가 `/home/$USER/DonggriGent`에 clone된 기준입니다. 다른 경로면 절대경로를 바꿔서 사용하세요.
 
-## MCP 연결 예시
+## MCP 등록 (복붙용)
+
 ### Codex
+
 ```bash
-codex mcp add kgentool-desktop -- node /ABS/PATH/TO/desktop/mcp-server.mjs
+cd ~/DonggriGent
+codex mcp add kgentool-desktop -- node /home/$USER/DonggriGent/mcp-server.mjs
+codex mcp list
 ```
 
 ### Claude Code
+
 ```bash
-claude mcp add --transport stdio kgentool-desktop -- node /ABS/PATH/TO/desktop/mcp-server.mjs
+cd ~/DonggriGent
+claude mcp add --transport stdio kgentool-desktop -- node /home/$USER/DonggriGent/mcp-server.mjs
+claude mcp list
 ```
 
-### OpenCode
-`quickstart.sh`의 `--client opencode` 또는 `--client all`로 자동 등록할 수 있습니다.
+## 기본 도구
 
-## 브라우저 백엔드 선택 가이드
-KGentool은 2개 백엔드를 지원합니다.
-- `electron`: 앱 내장 창으로 단순하고 빠른 시작에 유리
-- `chrome-cdp`: 실제 Chrome 계열 브라우저를 붙여 SSO/로그인 안정성이 높음
+- `kgentool_query`: 벤더 탭에 질의 전송
+- `kgentool_status`: 현재 상태/런타임 확인
+- `kgentool_tabs`: 탭 목록/상태 확인
+- `kgentool_save_artifacts`: 최근 산출물 저장
+- `kgentool_workflow_run`: 워크플로 실행
 
-권장:
-- 일반 사용: `electron`
-- Google/Microsoft/Apple SSO 이슈가 있으면: `chrome-cdp`
+## 워크플로 추천 (기본은 *_ko)
 
-자세한 비교는 [browser-backends](./docs/browser-backends.html) 참고.
+- `cpp_refactor_ko`: C++ 리팩터링/구조 개선
+- `vendor_hardening_ko`: 인증/팝업/보안 점검
+- `mcp_extension_ko`: MCP 도구/계약 확장
 
-## 핵심 기능 맵
-### 탭 기반 병렬 실행
-- 프로젝트마다 `key`를 고정하면 동일 탭/세션을 재사용
-- 병렬 작업은 탭 단위로 격리
+처음 시작하거나 한국어 보고서/리뷰가 필요하면 `*_ko`를 기본으로 사용하세요. 기존 자동화 호환이 필요할 때만 non-`_ko`를 사용합니다.
 
-### 산출물 루프
-- `kgentool_save_artifacts`로 결과물을 로컬에 저장
-- 다음 `attachments` 입력으로 바로 재사용
+## 예시 1) 질의 호출(JSON)
 
-### 워치 폴더
-- 폴더에 파일을 넣으면 인덱싱 후 작업 문맥에서 재활용 가능
+> 아래는 **터미널 명령이 아니라 MCP 도구 호출 예시**입니다.
 
-### 워크플로 실행
-- `.kgentool/workflows.toml` 정의를 기준으로 `kgentool_workflow_run` 실행
-- `.codex/agents/` 정의를 재사용해 supervisor/implement/reviewer 체인 구성
-
-### 벤더 프로파일 레지스트리
-- `vendor-profiles/`에서 벤더별 selector/규칙을 분리 관리
-
-## 실전 사용 예시
-### 1) 코드베이스 요약
 ```json
 {
   "tool": "kgentool_query",
   "arguments": {
-    "key": "repo-triage",
-    "prompt": "이 저장소 아키텍처를 8개 핵심 포인트로 요약해줘."
+    "key": "repo-audit",
+    "prompt": "현재 저장소에서 우선순위 높은 보안 개선 3가지를 한국어로 제시해줘."
   }
 }
 ```
 
-### 2) 이미지 산출물 저장
-```json
-{
-  "tool": "kgentool_save_artifacts",
-  "arguments": {
-    "key": "sprite-lab",
-    "mode": "images",
-    "maxImages": 3
-  }
-}
-```
+## 예시 2) 워크플로 실행(JSON)
 
-### 3) 워크플로 실행
-```json
-{
-  "tool": "kgentool_workflow_run",
-  "arguments": {
-    "workflowName": "cpp_refactor",
-    "prompt": "이 모듈을 C++ 중심 구조로 리팩토링하기 위한 실행 계획과 리뷰를 진행해줘."
-  }
-}
-```
+> 아래는 **터미널 명령이 아니라 MCP 도구 호출 예시**입니다.
 
-한국형(한국어 출력/핸드오프 규칙 강화) 워크플로:
 ```json
 {
   "tool": "kgentool_workflow_run",
   "arguments": {
     "workflowName": "cpp_refactor_ko",
-    "prompt": "이 모듈을 C++ 중심 구조로 리팩토링하기 위한 실행 계획과 리뷰를 한국어로 진행해줘. (WSL 기준 실행 커맨드 포함)"
+    "prompt": "WSL 기준 실행 명령까지 포함해서 리팩터링 계획과 검증 순서를 제안해줘."
   }
 }
 ```
 
-## 문서 허브
-### GitHub Pages 문서
-- [공식 주소](https://sheryloe.github.io/DonggriGent/)
-- [문서 홈](./docs/index.html)
-- [설치](./docs/install.html)
-- [MCP 연결](./docs/mcp-setup.html)
-- [워크플로](./docs/workflows.html)
-- [아키텍처](./docs/architecture.html)
-- [FAQ](./docs/faq.html)
-- [슬라이드 뷰](./docs/slides.html)
+## 예시 3) 워치 폴더 등록(JSON)
 
-문서 운영(로컬):
+> 워치 폴더 계열은 현재 `agentify_*` 이름을 사용합니다(레거시 호환 API).
+> 아래는 **터미널 명령이 아니라 MCP 도구 호출 예시**입니다.
+> 보안상 워치 폴더는 `/home/$USER/DonggriInbox` 같은 전용 폴더만 사용하고, 홈/저장소 루트는 등록하지 마세요.
+
+```json
+{
+  "tool": "agentify_add_watch_folder",
+  "arguments": {
+    "name": "inbox",
+    "folderPath": "/home/$USER/DonggriInbox"
+  }
+}
+```
+
+## 주요 파일 구조
+
+```text
+DonggriGent/
+├─ mcp-server.mjs
+├─ http-api.mjs
+├─ popup-policy.mjs
+├─ core-bridge.mjs
+├─ .kgentool/
+│  └─ workflows.toml
+├─ .codex/
+│  └─ agents/
+├─ docs/
+│  ├─ index.html
+│  ├─ getting-started.html
+│  ├─ install.html
+│  ├─ mcp-setup.html
+│  └─ workflows.html
+└─ tests/
+```
+
+## 운영 명령어
+
 ```bash
+npm test
 npm run docs:check
 npm run docs:serve
 ```
 
-### Wiki 원본(이관용)
-- [Wiki Home](./docs/wiki-ready/Home.md)
-- [Wiki Sidebar](./docs/wiki-ready/_Sidebar.md)
+선택: C++ 코어
 
-### 슬라이드 원본
-- [KGentool 소개 슬라이드(마크다운)](./docs/slides/kgentool-overview.md)
-
-## GitHub Pages 운영(권장: GitHub Actions)
-1. 저장소 `Settings > Pages`에서 Source를 **GitHub Actions**로 설정
-2. 문서는 `docs/`만 수정하고 `main`에 푸시
-3. `.github/workflows/pages.yml`가 `docs/**` 변경 시 자동 배포
-
-배포 전 최소 점검(권장):
 ```bash
-npm test
-npm run docs:check
+npm run core:build
+npm run core:test
 ```
 
-## Wiki 이관 방법
-1. GitHub 저장소의 Wiki를 활성화
-2. `docs/wiki-ready/`의 `.md` 파일을 Wiki 저장소 루트로 복사
-3. `_Sidebar.md`, `_Footer.md`를 함께 반영해 탐색 구조 적용
-4. Home/Installation/Quickstart 순서로 링크 점검
+## 문제 해결
 
-## FAQ (요약)
-### CAPTCHA를 우회하나요?
-아니요. KGentool은 CAPTCHA를 자동 우회하지 않습니다. 사람 개입 방식만 지원합니다.
+### 1) `./scripts/quickstart.sh`가 PowerShell에서 실행 안 됨
 
-### 기존 `agentify_*` 호출은 깨지나요?
-v1에서는 호환 alias를 유지합니다. 신규 구현은 `kgentool_*` 사용을 권장합니다.
+- 해당 스크립트는 bash 기준입니다.
+- 해결: WSL 또는 Git Bash에서 실행하거나, 아래 수동 경로를 사용합니다.
 
-### 상태 디렉터리는 어디인가요?
-기본은 `~/.kgentool/` 입니다.
+```bash
+npm ci
+npm run start
+```
 
-## 로드맵
-- C++ 코어 런타임 기능 확장(세션/거버너/워크플로 실행 고도화)
-- 문서 자동 배포 및 운영 템플릿 강화
-- 벤더 프로파일 운영 자동화(검증/회귀 체크)
+### 2) 포트 충돌/서버 중복 실행
 
-## 라이선스/브랜딩
-- 라이선스 및 상표는 저장소 내 관련 문서를 따릅니다.
-- 파생 프로젝트는 기존 Agentify 상표 정책을 확인해야 합니다.
+```bash
+ss -ltnp | grep 127.0.0.1
+```
+
+- 기존 실행 중인 프로세스를 종료 후 다시 시작합니다.
+
+### 3) 로그인/팝업 진행 안 됨
+
+- 데스크톱 창에서 먼저 수동 로그인 완료
+- 필요 시 백엔드를 `chrome-cdp`로 전환해 SSO 안정성 확보
+
+### 4) WSL에서 GUI 창이 안 보임
+
+- WSLg 미지원 환경이면 Windows 터미널(또는 PowerShell)에서 `npm run start` 실행
+
+## 보안 주의
+
+- `~/.kgentool/`에는 로컬 인증/런타임 정보가 저장됩니다. Git, 이슈, 로그, 메신저에 공유하지 마세요.
+- MCP 등록 경로는 신뢰 가능한 저장소 경로만 사용하세요. 자주 바뀌는 임시 경로는 피하세요.
+
+## 라이선스/정책
+
+- 라이선스 및 상표 정책은 저장소 정책 문서를 따릅니다.
+- 민감 정보(토큰/쿠키/개인정보)는 이슈/PR/로그에 남기지 마세요.
