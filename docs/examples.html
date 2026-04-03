@@ -1,0 +1,204 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>DonggriGent 실전 예시 | 경험 기반 샘플</title>
+    <meta
+      name="description"
+      content="초보자도 바로 실행 가능한 DonggriGent 실전 예시 모음. MCP JSON 샘플, 예상 결과, 다음 액션까지 한 번에 제공합니다."
+    />
+    <link rel="canonical" href="./examples.html" />
+    <link rel="stylesheet" href="./assets/styles.css" />
+  </head>
+  <body>
+    <header class="topbar">
+      <div class="topbar-inner">
+        <div class="brand">
+          <div class="brand-badge">DG</div>
+          <span>DonggriGent Docs</span>
+        </div>
+        <nav class="nav">
+          <a href="./index.html" data-path="index.html">홈</a>
+          <a href="./getting-started.html" data-path="getting-started.html">빠른 시작</a>
+          <a href="./install.html" data-path="install.html">설치</a>
+          <a href="./mcp-setup.html" data-path="mcp-setup.html">MCP 등록</a>
+          <a href="./examples.html" data-path="examples.html">실전 예시</a>
+          <a href="./workflows.html" data-path="workflows.html">워크플로</a>
+          <a href="./browser-backends.html" data-path="browser-backends.html">브라우저 백엔드</a>
+          <a href="./faq.html" data-path="faq.html">FAQ</a>
+        </nav>
+      </div>
+    </header>
+
+    <main class="page">
+      <section class="hero">
+        <div class="hero-grid">
+          <div class="hero-main">
+            <div class="hero-eyebrow">EXPERIENCE-BASED SAMPLES</div>
+            <h1>복붙해서 바로 쓰는 실전 예시</h1>
+            <p>
+              아래 예시는 실제 운영 흐름 기준으로 정리했습니다. 각 샘플마다 <strong>문제 상황 → JSON 호출 → 예상 결과 → 다음 액션</strong>
+              순서로 바로 실행할 수 있습니다.
+            </p>
+            <div class="cta-row">
+              <a class="btn btn-primary" href="#starter">첫 예시 바로 복붙</a>
+              <a class="btn btn-secondary" href="./getting-started.html">5분 시작 먼저 보기</a>
+            </div>
+          </div>
+          <aside class="hero-panel">
+            <div class="hero-label">처음이면 이 3개부터</div>
+            <ol class="step-list">
+              <li>문서 링크 회귀 점검 (`kgentool_query`)</li>
+              <li>문서 운영 개선안 자동 생성 (`mcp_extension_ko`)</li>
+              <li>배포 직전 상태 확인 + 산출물 저장</li>
+            </ol>
+            <div class="note warn">아래 JSON은 터미널 명령이 아니라 MCP 도구 호출 예시입니다.</div>
+          </aside>
+        </div>
+      </section>
+
+      <section class="grid">
+        <article class="card collage-card">
+          <div class="section-kicker">Page Moodboard</div>
+          <h2>예시가 쓰이는 운영 맥락</h2>
+          <p>이 문서의 예시는 링크 점검, 구조 정리, 배포 직전 확인이라는 실제 작업 흐름을 전제로 구성했습니다. 아래 콜라주에서 어떤 맥락에서 예시가 쓰이는지 먼저 훑고 바로 실행하면 됩니다.</p>
+          <div class="collage-board">
+            <figure class="collage-tile collage-tile-primary crop-top">
+              <img src="./assets/infographics/feature-matrix.svg" alt="DonggriGent 기능 매트릭스 인포그래픽" loading="lazy" />
+              <figcaption class="collage-caption">
+                <strong>오늘 바로 점검</strong>
+                <span>현재 가능한 기능 범위를 빠르게 파악</span>
+              </figcaption>
+            </figure>
+            <figure class="collage-tile collage-tile-wide crop-right">
+              <img src="./assets/infographics/architecture-flow.svg" alt="DonggriGent 아키텍처 흐름 인포그래픽" loading="lazy" />
+              <figcaption class="collage-caption">
+                <strong>문서 개선 흐름</strong>
+                <span>점검 결과를 워크플로와 연결</span>
+              </figcaption>
+            </figure>
+            <figure class="collage-tile crop-left">
+              <img src="./assets/infographics/install-flow.svg" alt="DonggriGent 설치 흐름 인포그래픽" loading="lazy" />
+              <figcaption class="collage-caption">
+                <strong>배포 직전 확인</strong>
+                <span>로그인 상태와 산출물 저장까지 마감</span>
+              </figcaption>
+            </figure>
+          </div>
+          <div class="note">처음 사용하면 이 예시부터 복붙하세요. 가장 실패 확률이 낮은 흐름만 먼저 배치했습니다.</div>
+        </article>
+      </section>
+
+      <section class="grid" id="starter">
+        <article class="card split-4">
+          <h2>예시 1) 링크/경로 회귀 탐지</h2>
+          <p><strong>문제:</strong> 배포 전 docs 링크 깨짐을 한 번에 잡고 싶을 때</p>
+          <pre><code>{
+  "tool": "kgentool_query",
+  "arguments": {
+    "key": "gh-pages:link-audit",
+    "model": "chatgpt",
+    "contextPaths": [
+      "docs/index.html",
+      "docs/getting-started.html",
+      "docs/mcp-setup.html",
+      "docs/workflows.html",
+      "docs/architecture.html"
+    ],
+    "promptPrefix": "GitHub Pages 배포 전 점검 모드로 동작한다.",
+    "prompt": "깨진 내부 링크, 잘못된 경로, 존재하지 않는 앵커를 파일명:줄번호 형식으로 제시하고 교체안까지 작성해줘.",
+    "maxContextInlineFiles": 20,
+    "maxContextChars": 18000
+  }
+}</code></pre>
+          <p><strong>예상 결과:</strong> 수정 대상 파일/줄번호 + 교체 문자열 제안</p>
+          <p><strong>다음 액션:</strong> 수정 후 동일 `key`로 재실행해 회귀 재검증</p>
+        </article>
+
+        <article class="card split-4">
+          <h2>예시 2) 문서 개선안 자동 생성</h2>
+          <p><strong>문제:</strong> 문서 규약/동선/용어 통합안을 빠르게 만들고 싶을 때</p>
+          <pre><code>{
+  "tool": "kgentool_workflow_run",
+  "arguments": {
+    "workflowName": "mcp_extension_ko",
+    "prompt": "현재 GitHub Pages 문서 운영 규약 기준으로 링크 정책, 도구 명명 규칙, Troubleshooting 동선을 통합한 개선안 1개를 만들어줘. docs/index.html, docs/workflows.html, docs/mcp-setup.html 중심으로 체크리스트와 검증 순서 포함."
+  }
+}</code></pre>
+          <p><strong>예상 결과:</strong> `plan → implementation → review` 3단계 산출물</p>
+          <p><strong>다음 액션:</strong> `outputs.review` 기준으로 반영/검증/롤백 체크리스트 작성</p>
+        </article>
+
+        <article class="card split-4">
+          <h2>예시 3) 배포 직전 상태 점검</h2>
+          <p><strong>문제:</strong> 로그인 차단/응답 지연 상태로 배포 직전에 실패할 때</p>
+          <pre><code>{
+  "tool": "kgentool_status",
+  "arguments": {
+    "key": "gh-pages:publish",
+    "model": "chatgpt"
+  }
+}</code></pre>
+          <pre><code>{
+  "tool": "kgentool_save_artifacts",
+  "arguments": {
+    "key": "gh-pages:publish",
+    "mode": "files",
+    "maxFiles": 8
+  }
+}</code></pre>
+          <p><strong>예상 결과:</strong> `blocked` 상태 확인 + 저장된 아티팩트 목록 확보</p>
+          <p><strong>다음 액션:</strong> PR에 아티팩트 경로 첨부 후 배포 진행</p>
+        </article>
+      </section>
+
+      <section class="grid">
+        <article class="card split-6">
+          <h2>상황별 확장 리스트</h2>
+          <div class="chip-row">
+            <span class="chip">처음 시작</span>
+            <span class="chip">리팩터링</span>
+            <span class="chip">보안 점검</span>
+            <span class="chip">MCP 확장</span>
+            <span class="chip">워치 폴더</span>
+            <span class="chip">운영 점검</span>
+          </div>
+          <ul class="list-tight">
+            <li>리팩터링 자동화: `cpp_refactor_ko`</li>
+            <li>보안 하드닝: `vendor_hardening_ko`</li>
+            <li>도구 계약 확장: `mcp_extension_ko`</li>
+            <li>파일 인입 파이프라인: `agentify_add_watch_folder`</li>
+            <li>운영 상태 복구: `kgentool_status`, `agentify_ensure_ready`</li>
+          </ul>
+        </article>
+        <article class="card split-6">
+          <h2>실행 결과 체크리스트</h2>
+          <ul class="list-tight">
+            <li>응답에 `tabId`/`meta`/`packedContextSummary`가 포함됐는지 확인</li>
+            <li>워크플로 응답에 `steps`와 `outputs.review`가 채워졌는지 확인</li>
+            <li>`blocked=true`면 로그인/팝업 완료 후 재시도</li>
+            <li>아티팩트 저장 후 파일 경로를 PR/노트에 기록</li>
+            <li>신규 작업은 `*_ko` 우선, 레거시는 호환이 필요할 때만 사용</li>
+          </ul>
+          <div class="note ok">무엇을 실행할지 애매하면 `mcp_extension_ko`부터 실행해 현재 상태 진단 + 개선안을 동시에 받으세요.</div>
+        </article>
+      </section>
+
+      <section class="grid">
+        <article class="card">
+          <h2>이전/다음 단계</h2>
+          <div class="cta-row">
+            <a class="btn btn-primary" href="./getting-started.html">이전: 빠른 시작</a>
+            <a class="btn btn-primary" href="./workflows.html">다음: 워크플로</a>
+            <a class="btn btn-secondary" href="./index.html">홈으로</a>
+          </div>
+        </article>
+      </section>
+
+      <div class="footer">GitHub Pages: <a href="https://sheryloe.github.io/DonggriGent/">https://sheryloe.github.io/DonggriGent/</a></div>
+    </main>
+
+    <script src="./assets/site.js"></script>
+  </body>
+</html>

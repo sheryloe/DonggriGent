@@ -12,6 +12,7 @@ Codex/Claude Code에서 `kgentool_*` 도구를 호출해 질의, 상태 확인, 
 - 설치: [./docs/install.html](./docs/install.html)
 - MCP 연결: [./docs/mcp-setup.html](./docs/mcp-setup.html)
 - 워크플로: [./docs/workflows.html](./docs/workflows.html)
+- 실전 예시: [./docs/examples.html](./docs/examples.html)
 
 ## 누구에게 맞는가
 
@@ -60,6 +61,37 @@ claude mcp list
 - `kgentool_tabs`: 탭 목록/상태 확인
 - `kgentool_save_artifacts`: 최근 산출물 저장
 - `kgentool_workflow_run`: 워크플로 실행
+
+## 이걸로 할 수 있는 것 (핵심 10)
+
+- 로그인 세션 유지 상태로 Codex/Claude에서 바로 질의/작업 실행
+- `key` 기반으로 프로젝트 문맥 분리 후 병렬 작업 운영
+- `contextPaths`로 로컬 코드/문서 자동 패킹 + 첨부 자동화
+- 반복 작업을 번들로 저장해 팀 표준 프롬프트 재사용
+- 산출물 저장 후 다음 작업에 재첨부하는 루프 자동화
+- 워치 폴더 기반으로 파일 인입/스캔 파이프라인 구성
+- `plan → implement → review` 3단계 워크플로 일괄 실행
+- `*_ko` 워크플로로 한국어 보고/리뷰 중심 운영
+- 상태 확인/중지/준비 대기로 막힌 세션 복구
+- `electron`/`chrome-cdp` 전환으로 SSO 안정성 튜닝
+
+## 확장 가능한 운영 패턴 (Top 5)
+
+- 팀 전용 워크플로 추가: `.kgentool/workflows.toml` + `.codex/agents/*.toml`
+- 프로젝트별 자동화 라인: 번들 + `key` 규칙 표준화
+- 문서/디자인 인입 자동화: 워치 폴더 + 아티팩트 저장 연결
+- 다중 탭 병렬 운영: 여러 레포/고객 이슈 동시 처리
+- 이미지 생성/다운로드 포함 콘텐츠 파이프라인 확장
+
+## 고급/호환 도구 (agentify_*)
+
+> 신규 권장은 `kgentool_*`이지만, 아래 고급 기능은 현재 `agentify_*` 네임스페이스로 제공합니다.
+
+- 세션 제어: `agentify_ensure_ready`, `agentify_stop_query`, `agentify_shutdown`
+- 페이지 제어: `agentify_read_page`, `agentify_navigate`, `agentify_show`, `agentify_hide`
+- 워치 폴더: `agentify_add_watch_folder`, `agentify_scan_watch_folder`, `agentify_open_watch_folder`
+- 번들/아티팩트: `agentify_save_bundle`, `agentify_list_bundles`, `agentify_list_artifacts`
+- 이미지 작업: `agentify_image_gen`, `agentify_download_images`
 
 ## 워크플로 추천 (기본은 *_ko)
 

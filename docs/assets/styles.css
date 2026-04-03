@@ -233,6 +233,120 @@ a:hover {
     linear-gradient(180deg, rgba(237, 247, 239, 0.88) 0%, rgba(255, 255, 255, 1) 100%);
 }
 
+.collage-card {
+  background:
+    radial-gradient(circle at 0% 0%, rgba(216, 239, 217, 0.9) 0%, rgba(255, 255, 255, 0) 35%),
+    linear-gradient(180deg, rgba(237, 247, 239, 0.92) 0%, rgba(255, 255, 255, 1) 100%);
+}
+
+.collage-board {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr 1fr;
+  grid-auto-rows: 160px;
+  gap: 14px;
+  margin-top: 18px;
+}
+
+.collage-tile {
+  position: relative;
+  overflow: hidden;
+  border-radius: 18px;
+  border: 1px solid rgba(31, 106, 53, 0.16);
+  background: #163521;
+  box-shadow: 0 16px 28px rgba(20, 69, 28, 0.12);
+}
+
+.collage-tile::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(10, 24, 16, 0.02) 0%, rgba(10, 24, 16, 0.72) 100%);
+  pointer-events: none;
+}
+
+.collage-tile img {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
+  transform: scale(1.08);
+  filter: saturate(1.05) contrast(1.03);
+}
+
+.collage-tile-primary {
+  grid-row: span 2;
+}
+
+.collage-tile-wide {
+  grid-column: span 2;
+}
+
+.collage-caption {
+  position: absolute;
+  left: 14px;
+  right: 14px;
+  bottom: 14px;
+  z-index: 1;
+  color: #fff;
+}
+
+.collage-caption strong,
+.collage-caption span {
+  display: block;
+}
+
+.collage-caption strong {
+  font-size: 15px;
+  letter-spacing: -0.02em;
+}
+
+.collage-caption span {
+  margin-top: 2px;
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.86);
+}
+
+.crop-top img {
+  object-position: center 12%;
+}
+
+.crop-left img {
+  object-position: 18% center;
+}
+
+.crop-right img {
+  object-position: 82% center;
+}
+
+.crop-bottom img {
+  object-position: center 78%;
+}
+
+.collage-board .collage-tile:nth-child(1) {
+  animation: collage-in 0.55s ease both;
+}
+
+.collage-board .collage-tile:nth-child(2) {
+  animation: collage-in 0.65s ease both;
+}
+
+.collage-board .collage-tile:nth-child(3) {
+  animation: collage-in 0.75s ease both;
+}
+
+@keyframes collage-in {
+  from {
+    opacity: 0;
+    transform: translateY(16px) scale(0.98);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+
 .workflow-grid,
 .visual-grid {
   display: grid;
@@ -438,9 +552,20 @@ th {
   }
 
   .hero-grid,
+  .collage-board,
   .workflow-grid,
   .visual-grid {
     grid-template-columns: 1fr;
+  }
+
+  .collage-board {
+    grid-auto-rows: minmax(180px, auto);
+  }
+
+  .collage-tile-primary,
+  .collage-tile-wide {
+    grid-column: span 1;
+    grid-row: span 1;
   }
 
   .hero {
