@@ -8,6 +8,7 @@
       name="description"
       content="DonggriGent 공식 문서 랜딩. 설치, MCP 등록, *_ko 워크플로 실행까지 초보자 기준으로 안내합니다."
     />
+    <meta name="keywords" content="MCP, Codex, Claude, workflow automation, browser automation, 코드 자동화, DonggriGent">
     <meta property="og:type" content="website" />
     <meta property="og:locale" content="ko_KR" />
     <meta property="og:site_name" content="DonggriGent Docs" />
@@ -71,8 +72,31 @@
               <span class="hero-label">GitHub Pages</span>
               <a href="https://sheryloe.github.io/DonggriGent/">https://sheryloe.github.io/DonggriGent/</a>
             </div>
+            <div class="note ok">Repository Tags: mcp, workflow-orchestration, ai-workflow, developer-tools</div>
           </aside>
         </div>
+      </section>
+
+      <section class="grid">
+        <article class="card split-6">
+          <h2>비전공자용 4단계 시작</h2>
+          <ul class="list-tight">
+            <li>1) 설치: `npm ci` + `npm run start`</li>
+            <li>2) MCP 연결: Codex 또는 Claude Code에 도구 등록</li>
+            <li>3) 첫 질의: `kgentool_query`로 오늘 목표 3개 요청</li>
+            <li>4) 결과 저장: `kgentool_save_artifacts`로 다음 작업에 재사용</li>
+          </ul>
+          <div class="note">목표는 먼저 완벽이 아니라, 5분 안에 첫 호출 성공입니다.</div>
+        </article>
+        <article class="card split-6">
+          <h2>이렇게 쓰면 잘 맞는 조합</h2>
+          <ul class="list-tight">
+            <li>기획팀: 요구사항 정리를 `key` 기준으로 표준화</li>
+            <li>개발팀: 브라우저 세션 유지 작업 + 리뷰 흐름 합치기</li>
+            <li>PM: 산출물 저장 루틴으로 보고서 작성 시간 단축</li>
+          </ul>
+          <div class="note">반복성 기반 운영이 결국 운영 효율을 만듭니다.</div>
+        </article>
       </section>
 
       <section class="grid">
@@ -174,6 +198,7 @@
             <li>처음엔 작은 범위 질의 후 확장</li>
             <li>로그인 이슈가 있으면 FAQ/브라우저 백엔드 문서 확인</li>
           </ul>
+          <div class="note">권장 운영 원칙: 먼저 실패가 적은 시나리오부터 자동화하고, 로그로 원인-해결-재실행 루틴을 고정하세요.</div>
         </article>
       </section>
 

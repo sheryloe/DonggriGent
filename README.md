@@ -14,6 +14,19 @@ Codex/Claude Code에서 `kgentool_*` 도구를 호출해 질의, 상태 확인, 
 - 워크플로: [./docs/workflows.html](./docs/workflows.html)
 - 실전 예시: [./docs/examples.html](./docs/examples.html)
 
+## Repository 태그
+
+- `mcp`
+- `ai-workflow`
+- `browser-automation`
+- `workflow-orchestration`
+- `developer-tools`
+
+## 한 줄 CTA
+
+- **이런 분께 적합**: AI에게 명령만 내리고, 반복 작업은 툴이 처리하게 하고 싶은 비개발자 포함 팀
+- **비즈니스 효과**: 같은 작업의 재작업을 줄이고, 보고서·워크플로 재실행 시간을 줄여 운영 속도를 높임
+
 ## 누구에게 맞는가
 
 - 브라우저 로그인 세션을 유지한 채 AI 작업을 반복 실행해야 하는 개발자
@@ -35,6 +48,32 @@ npm run start
 
 실행 후 데스크톱 창이 열리면 사용하려는 벤더(예: ChatGPT) 계정으로 로그인합니다.
 > 아래 MCP 등록 명령은 저장소가 `/home/$USER/DonggriGent`에 clone된 기준입니다. 다른 경로면 절대경로를 바꿔서 사용하세요.
+
+## 비전공자용 3단계 시작(복붙 중심)
+
+### 1) 설치/실행
+
+```bash
+npm ci
+npm run start
+```
+
+### 2) MCP 등록
+
+- Codex: `codex mcp add ...` 형태로 붙입니다.
+- Claude Code: 동일 서버 경로를 `claude mcp add --transport stdio`로 연결합니다.
+
+### 3) 첫 사용
+
+1. 질의용 프롬프트를 `kgentool_query`로 보냅니다.
+2. 필요하면 `kgentool_workflow_run`으로 작업흐름을 자동 실행합니다.
+3. 결과를 `kgentool_save_artifacts`로 저장해 다음 작업에 붙입니다.
+
+## 누구와 같이 쓰면 좋나
+
+- 기획자: 요구사항을 텍스트로 정리해 반복 실행 가능한 워크플로로 변환
+- PM/리드: 작업 상태 확인(`kgentool_status`) + 결과 보관 루틴 정착
+- 콘텐츠/문서팀: 문장 다듬기, 리뷰, 정리 루틴을 동일 형식으로 처리
 
 ## MCP 등록 (복붙용)
 
